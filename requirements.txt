@@ -8,7 +8,7 @@ openpyxl
 tensorboardX
 transformers==4.39.3
 tokenizers==0.15.1
-sentencepiece==0.1.99
+# sentencepiece==0.1.99
 shortuuid
 accelerate==0.27.2
 bitsandbytes==0.41.0

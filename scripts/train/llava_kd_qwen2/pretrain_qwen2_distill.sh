@@ -49,7 +49,7 @@ deepspeed --include localhost:0,1,2,3 --master_port 29501 llavakd/train/train_di
     --num_train_epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 4 \
-    --gradient_accumulation_steps 32 \
+    --gradient_accumulation_steps 16 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
     --save_steps 5000 \
@@ -59,7 +59,7 @@ deepspeed --include localhost:0,1,2,3 --master_port 29501 llavakd/train/train_di
     --warmup_ratio 0.03 \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
-    --tf32 False \
+    --tf32 True \
     --model_max_length $MODEL_MAX_LENGTH \
     --gradient_checkpointing True \
     --dataloader_num_workers 8 \

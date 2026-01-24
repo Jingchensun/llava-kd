@@ -5,35 +5,15 @@
 
 - Prepare the environment
   ```shell
-  python3.12 -m pip install --no-cache-dir --upgrade -r requirements.txt
-  python3.12 -m pip install numpy==1.26.2
-  python3.12 -m pip install urllib3==1.26.6
+conda create -n llava-kd python=3.12
+conda activate llava-kd
+python -m pip install -U pip setuptools wheel
+pip install sentencepiece
+pip install -r requirements.txt
+pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+pip install numpy==1.26.2
+pip install urllib3==1.26.6
   ```
-
-- Install cuda12.6
-  ```shell
-  sh cuda_12.9.1_575.57.08_linux.run
-  ```
-
-- Install Cusparselt
-  ```shell
-  cd ../LLaVA_KD_whls/
-  rpm -i cusparselt-local-repo-rhel9-0.7.1-1.0-1.x86_64.rpm
-  dnf clean all
-  dnf -y install libcusparselt0 libcusparselt-devel
-  ```
-
-- Install bitsandbytes
-  ```shell
-  cd ../LLaVA_KD_whls/bitsandbytes-0.46.0
-  python3.12 setup.py install 
-  ```
-
-- Install deepspeed
-  ```shell
-  python3.12 -m pip install ptflops
-  python3.12 -m pip install deepspeed==0.14.4
-
 
 ## LLaVA-KD Weights
 | Model                                                   | Vision Encoder                                               | LLM                                                           |  CKPTs

@@ -10,3 +10,4 @@
 checkpoints/
 dataset/
 pretrained_checkpoints/
+wandb/

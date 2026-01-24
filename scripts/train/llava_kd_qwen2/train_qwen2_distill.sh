@@ -12,10 +12,10 @@ export LD_LIBRARY_PATH=/usr/local/cuda-12.6/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.12/site-packages/nvidia/nccl/lib
 
 
-DATA_PATH=/home/csgrad/jsun39/llava-kd/dataset/text_files/blip_laion_cc_sbu_558k.json #pretrain annotation file path
-FINETUNE_DATA_PATH=/home/csgrad/jsun39/llava-kd/dataset/text_files/llava_v1_5_mix665k.json #finetune annotation file path
-IMAGE_PATH=/home/csgrad/jsun39/llava-kd/dataset/llava/llava_pretrain/images #pretrain image dir
-FINETUNE_IMAGE_PATH=/home/csgrad/jsun39/llava-kd/dataset #finetune image dir
+DATA_PATH=/home/jsun/llava-kd/dataset/blip_laion_cc_sbu_558k.json #pretrain annotation file path
+FINETUNE_DATA_PATH=/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json #finetune annotation file path
+IMAGE_PATH=/home/jsun/llava-kd/dataset/llava/llava_pretrain/images #pretrain image dir
+FINETUNE_IMAGE_PATH=/home/jsun/llava-kd/dataset #finetune image dir
 
 LLM_VERSION=Qwen/Qwen2.5-0.5B # llm path in huggingface
 VT_VERSION=google/siglip-so400m-patch14-384 #vision tower path in huggingface
