@@ -21,8 +21,14 @@ TEACHER_NAME="${12}"
 VT_VARIANT="${VT_VERSION#*/}"
 LLM_VARIANT="${LLM_VERSION#*/}"
 
+# Change to project root directory
+cd "$(dirname "$0")/../../.."
+
+# Add project root to PYTHONPATH
+export PYTHONPATH="${PWD}:${PYTHONPATH}"
+
 deepspeed --include localhost:0,1,2,3,4,5,6,7 --master_port 29502 llavakd/train/train_distill_after_qwen2_sft.py \
-    --deepspeed ./scripts/zero3.json \
+    --deepspeed scripts/zero3.json \
     --data_path  $DATA_PATH \
     --image_folder $IMAGE_PATH \
     --teacher_pretrained_dir $TEACHER_PATH \
@@ -43,8 +49,8 @@ deepspeed --include localhost:0,1,2,3,4,5,6,7 --master_port 29502 llavakd/train/
     --tune_vision_tower_from_layer 0 \
     --tune_type_connector full \
     --group_by_modality_length True \
-    --pretrained_model_path ./checkpoints/qwen2_distill_llava_factory/tiny-llava-Qwen1.5-0.5B-siglip-so400m-patch14-384-base-finetune \
-    --output_dir ./checkpoints/qwen25_distill_llava_factory/tiny-llava-${LLM_VARIANT}-${VT_VARIANT}-${VERSION}-3B_to_05B-DFT \
+    --pretrained_model_path checkpoints/qwen2_distill_llava_factory/tiny-llava-Qwen1.5-0.5B-siglip-so400m-patch14-384-base-finetune \
+    --output_dir checkpoints/qwen25_distill_llava_factory/tiny-llava-${LLM_VARIANT}-${VT_VARIANT}-${VERSION}-3B_to_05B-DFT \
     --num_train_epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 4 \

@@ -19,8 +19,14 @@ MODEL_MAX_LENGTH="${10}"
 VT_VARIANT="${VT_VERSION#*/}"
 LLM_VARIANT="${LLM_VERSION#*/}"
 
+# Change to project root directory
+cd "$(dirname "$0")/../../.."
+
+# Add project root to PYTHONPATH
+export PYTHONPATH="${PWD}:${PYTHONPATH}"
+
 deepspeed --include localhost:0,1,2,3,4,5,6,7 --master_port 29501 llavakd/train/train_sft.py \
-    --deepspeed ./scripts/zero3.json \
+    --deepspeed scripts/zero3.json \
     --data_path  $DATA_PATH \
     --image_folder $IMAGE_PATH \
     --is_multimodal True \

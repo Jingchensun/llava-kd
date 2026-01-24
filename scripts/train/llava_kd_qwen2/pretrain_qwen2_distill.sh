@@ -20,8 +20,14 @@ MODEL_MAX_LENGTH="$9"
 VT_VARIANT="${VT_VERSION#*/}"
 LLM_VARIANT="${LLM_VERSION#*/}"
 
-deepspeed --include localhost:0,1,2,3,4,5,6,7 --master_port 29501 llavakd/train/train_distill_qwen2.py \
-    --deepspeed ./scripts/zero2.json \
+# Change to project root directory
+cd "$(dirname "$0")/../../.."
+
+# Add project root to PYTHONPATH
+export PYTHONPATH="${PWD}:${PYTHONPATH}"
+
+deepspeed --include localhost:0,1,2,3 --master_port 29501 llavakd/train/train_distill_qwen2.py \
+    --deepspeed scripts/zero2.json \
     --data_path  $DATA_PATH\
     --image_folder $IMAGE_PATH \
     --is_multimodal True \
@@ -39,7 +45,7 @@ deepspeed --include localhost:0,1,2,3,4,5,6,7 --master_port 29501 llavakd/train/
     --tune_type_vision_tower frozen \
     --tune_vision_tower_from_layer 0 \
     --tune_type_connector full \
-    --output_dir ./checkpoints/qwen25_distill_llava_factory/tiny-llava-${LLM_VARIANT}-${VT_VARIANT}-${VERSION}-distill-pretrain \
+    --output_dir checkpoints/qwen25_distill_llava_factory/tiny-llava-${LLM_VARIANT}-${VT_VARIANT}-${VERSION}-distill-pretrain \
     --num_train_epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 4 \

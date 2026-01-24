@@ -76,30 +76,31 @@ def train():
     # teacher_dir = "Your Teacher ckpts dir"
     teacher_dir = './pretrained_checkpoints/LLaVA_KD_ckpts/tiny-llava-Qwen2.5-3B-siglip-so400m-patch14-384-qwen2-0_5b_base-finetune'
 
-    pre_vision_tower_path = os.path.join(teacher_dir, 'vision_tower/pytorch_model.bin')
-    pre_vision = torch.load(pre_vision_tower_path, map_location='cpu')
-    pre_connector_path = os.path.join(teacher_dir, 'connector/pytorch_model.bin')
-    pre_connector = torch.load(pre_connector_path, map_location='cpu')
-        
+    # 直接从 Hugging Face 格式加载完整的教师模型
+    print(f"Loading teacher model from {teacher_dir}")
+    from llavakd.model.modeling_LLaVA_KD import LLaVAKD
+    from llavakd.model.configuration_tinyllava import TinyLlavaConfig
+    
     teacher_model_config = TinyLlavaConfig.from_pretrained(teacher_dir)
-    teacher_model = LLaVAKD(teacher_model_config)
-
-    teacher_model.language_model = teacher_model.language_model.from_pretrained(os.path.join(teacher_dir, 'language_model'))
-
-    # load from vision pretrained
-    teacher_model.vision_tower._vision_tower.load_state_dict(pre_vision)
-    print(f"Teacher Loading vision from {pre_vision_tower_path}")
-
-    # load from connector pretrained
-    teacher_model.connector._connector.load_state_dict(get_conncet_w(pre_connector, '_connector'))
-    print(f"Teacher Loading connector from {pre_connector_path}")
+    teacher_model = LLaVAKD.from_pretrained(
+        teacher_dir,
+        config=teacher_model_config,
+        torch_dtype=torch.float16
+    )
+    print(f"Teacher model loaded successfully")
     
     teacher_model.eval()
 
     # stu_pre_vision_tower_path = "We use the weights from S-MLLM training with PT-SFT scheme"
+    # 使用教师模型的 vision tower 作为学生模型的初始权重
     stu_pre_vision_tower_path = os.path.join('./pretrained_checkpoints/LLaVA_KD_ckpts/tiny-llava-Qwen2.5-3B-siglip-so400m-patch14-384-qwen2-0_5b_base-finetune', 'vision_tower/pytorch_model.bin')
     pre_vision = torch.load(stu_pre_vision_tower_path, map_location='cpu')
-    pre_language =  AutoModelForCausalLM.from_pretrained(os.path.join('./pretrained_hg', 'Qwen2.5-0.5B'), trust_remote_code=True)
+    
+    # 从 Hugging Face 加载学生模型的语言模型 (Qwen2.5-0.5B)
+    # 如果本地有缓存会自动使用,否则会从 HF 下载
+    print("Loading student language model: Qwen/Qwen2.5-0.5B")
+    pre_language = AutoModelForCausalLM.from_pretrained('Qwen/Qwen2.5-0.5B', trust_remote_code=True)
+    print("Student language model loaded successfully")
 
     # load argument
     parser = transformers.HfArgumentParser(
@@ -119,7 +120,7 @@ def train():
     
 
     model.vision_tower._vision_tower.load_state_dict(pre_vision)
-    print(f"Loading vision from {pre_vision_tower_path}")
+    print(f"Loading vision from {stu_pre_vision_tower_path}")
 
     # load from pretrained
     for key, Value in pre_language.state_dict().items():
