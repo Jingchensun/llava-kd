@@ -93,55 +93,59 @@ class BaseTrainingRecipe:
         
     
     def save(self, model, trainer):
+        """
+        训练结束时保存完整模型（包括 Connector、Vision Tower、LLM）。
+        中间checkpoint只保存connector，最终checkpoint保存所有权重。
+        """
         model.config.use_cache = True
-        #save tokenizer       
-        model.tokenizer.save_pretrained(self.training_arguments.output_dir)
-        #save entire model config
-        model.config.save_pretrained(self.training_arguments.output_dir, from_pt=True)
-        #save trainer
-        trainer.save_state()
-
-        if 'finetune' in self.training_arguments.output_dir and self.training_arguments.pretrained_model_path is not None: # for finetune stage
-            if trainer.deepspeed:
-                torch.cuda.synchronize()
-            trainer.save_model(self.training_arguments.output_dir)
-            return
         
-        #the followings are for pretrain stage
-        #save language model
-        language_model_state_dict = get_state_maybe_zero_3(model.language_model.named_parameters(), [''], False)
         if trainer.args.local_rank == 0 or trainer.args.local_rank == -1:
-            language_model_output_dir = os.path.join(self.training_arguments.output_dir, 'language_model')
-            os.makedirs(language_model_output_dir, exist_ok=True)
-            language_model_output_path = os.path.join(self.training_arguments.output_dir, 'language_model/pytorch_model.bin')
-            torch.save(language_model_state_dict, language_model_output_path)
-            model.config.text_config.save_pretrained(language_model_output_dir, from_pt=True)
-        #save vision tower
-        try:
-            vision_tower_state_dict = get_state_maybe_zero_3(model.vision_tower._vision_tower.named_parameters(), [''], False)
-            if trainer.args.local_rank == 0 or trainer.args.local_rank == -1:
-                vision_tower_output_dir = os.path.join(self.training_arguments.output_dir, 'vision_tower')
-                os.makedirs(vision_tower_output_dir, exist_ok=True)
-                vision_tower_output_path = os.path.join(self.training_arguments.output_dir, 'vision_tower/pytorch_model.bin')
-                torch.save(vision_tower_state_dict, vision_tower_output_path)
-                if isinstance(model.vision_tower._vision_tower, PreTrainedModel):
-                    model.vision_tower._vision_tower.config.save_pretrained(vision_tower_output_dir, from_pt=True)
-        except:
-            vision_tower_state_dict = get_state_maybe_zero_3(model.vision_tower.named_parameters(), [''], False)
-            if trainer.args.local_rank == 0 or trainer.args.local_rank == -1:
-                vision_tower_output_dir = os.path.join(self.training_arguments.output_dir, 'vision_tower')
-                os.makedirs(vision_tower_output_dir, exist_ok=True)
-                vision_tower_output_path = os.path.join(self.training_arguments.output_dir, 'vision_tower/pytorch_model.bin')
-                torch.save(vision_tower_state_dict, vision_tower_output_path)
-                if isinstance(model.vision_tower, PreTrainedModel):
-                    model.vision_tower.config.save_pretrained(vision_tower_output_dir, from_pt=True)
-        #save connector
-        connector_state_dict = get_state_maybe_zero_3(model.connector.named_parameters(), [''], False)
-        if trainer.args.local_rank == 0 or trainer.args.local_rank == -1:
+            os.makedirs(self.training_arguments.output_dir, exist_ok=True)
+            
+            # 保存 tokenizer
+            model.tokenizer.save_pretrained(self.training_arguments.output_dir)
+            
+            # 保存模型配置
+            model.config.save_pretrained(self.training_arguments.output_dir, from_pt=True)
+            
+            # ====== 保存完整模型权重 ======
+            # 1. 保存 Connector 权重
+            connector_state_dict = get_state_maybe_zero_3(model.connector.named_parameters(), [''], False)
             connector_output_dir = os.path.join(self.training_arguments.output_dir, 'connector')
             os.makedirs(connector_output_dir, exist_ok=True)
-            connector_output_path = os.path.join(self.training_arguments.output_dir, 'connector/pytorch_model.bin')
+            connector_output_path = os.path.join(connector_output_dir, 'pytorch_model.bin')
             torch.save(connector_state_dict, connector_output_path)
+            print(f"Connector权重已保存到: {connector_output_path}")
+            
+            # 2. 保存 Vision Tower 权重
+            vt_state_dict = get_state_maybe_zero_3(model.vision_tower.named_parameters(), [''], False)
+            vt_output_dir = os.path.join(self.training_arguments.output_dir, 'vision_tower')
+            os.makedirs(vt_output_dir, exist_ok=True)
+            vt_output_path = os.path.join(vt_output_dir, 'pytorch_model.bin')
+            torch.save(vt_state_dict, vt_output_path)
+            print(f"Vision Tower权重已保存到: {vt_output_path}")
+            
+            # 3. 保存 Language Model 权重
+            llm_state_dict = get_state_maybe_zero_3(model.language_model.named_parameters(), [''], False)
+            llm_output_dir = os.path.join(self.training_arguments.output_dir, 'language_model')
+            os.makedirs(llm_output_dir, exist_ok=True)
+            llm_output_path = os.path.join(llm_output_dir, 'pytorch_model.bin')
+            torch.save(llm_state_dict, llm_output_path)
+            print(f"Language Model权重已保存到: {llm_output_path}")
+            
+            # 保存训练状态
+            minimal_state = {
+                'global_step': trainer.state.global_step,
+                'epoch': trainer.state.epoch,
+                'best_metric': trainer.state.best_metric,
+                'best_model_checkpoint': trainer.state.best_model_checkpoint,
+            }
+            state_path = os.path.join(self.training_arguments.output_dir, 'trainer_state.json')
+            import json
+            with open(state_path, 'w') as f:
+                json.dump(minimal_state, f, indent=2, default=str)
+            
+            print(f"✓ 最终模型已完整保存到: {self.training_arguments.output_dir}")
     
 
     def load(self, model, model_args={}):

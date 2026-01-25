@@ -76,7 +76,20 @@ def eval_model(args):
     # Model
     disable_torch_init()
     model_path = os.path.expanduser(args.model_path)
-    model, tokenizer, image_processor, context_len = load_pretrained_model(model_path)
+    
+    # 根据参数选择加载方式
+    if args.load_distill:
+        # 加载蒸馏训练的模型（仅 Connector 权重）
+        # Vision Tower 和 LLM 从 HuggingFace 重新加载
+        model, tokenizer, image_processor, context_len = load_distill_model(
+            connector_checkpoint_path=model_path,
+            llm_model_id=args.llm_model_id,
+            vt_model_id=args.vt_model_id,
+            cache_dir=args.cache_dir
+        )
+    else:
+        # 加载完整的预训练模型
+        model, tokenizer, image_processor, context_len = load_pretrained_model(model_path)
     
     text_processor = TextPreprocess(tokenizer, args.conv_mode)
     data_args = model.config
@@ -144,6 +157,15 @@ if __name__ == "__main__":
     parser.add_argument("--num_beams", type=int, default=1)
     parser.add_argument("--max_new_tokens", type=int, default=128)
     parser.add_argument("--image_aspect_ratio", type=str, default="pad")
+    # 蒸馏模型加载参数
+    parser.add_argument("--load-distill", action="store_true", 
+                        help="加载蒸馏训练的模型（仅 Connector 权重），Vision Tower 和 LLM 从 HuggingFace 加载")
+    parser.add_argument("--llm-model-id", type=str, default="Qwen/Qwen2.5-0.5B",
+                        help="HuggingFace LLM 模型 ID")
+    parser.add_argument("--vt-model-id", type=str, default="google/siglip-so400m-patch14-384",
+                        help="HuggingFace Vision Tower 模型 ID")
+    parser.add_argument("--cache-dir", type=str, default="./pretrained_checkpoints",
+                        help="模型缓存目录")
     args = parser.parse_args()
 
     eval_model(args)

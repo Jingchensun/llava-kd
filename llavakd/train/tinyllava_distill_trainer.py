@@ -134,18 +134,63 @@ class DistillLLaVATrainer(Trainer):
         self.teacher_model = teacher_model
         self.teacher_model.eval()
         self.teacher_model.requires_grad_(False)
-        self.loss_fct =  nn.KLDivLoss(reduction="batchmean")
+        self.loss_fct = nn.KLDivLoss(reduction="batchmean")
         self.niter = 0
         self.mismatch_count = 0
+        
+        # Teacher模型已在train_distill_qwen2.py中移动到正确的设备
+        # 这里只打印确认信息
+        device = next(self.teacher_model.parameters()).device
+        print(f"[Rank {self.args.local_rank}] Teacher模型位于: {device}")
 
-        self.teacher_model = self.teacher_model.to(self.args.device)
-        if self.args.n_gpu > 1:
-            self.teacher_model = torch.nn.DataParallel(self.teacher_model)
-
-        self.model = self.model.to(self.args.device)
-        if self.args.n_gpu > 1:
-            self.model = torch.nn.DataParallel(self.model)
-
+    def _save_checkpoint(self, model, trial, metrics=None):
+        """
+        中间checkpoint只保存connector权重，节省存储空间。
+        最终完整模型由 training_recipe.save() 保存。
+        """
+        from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
+        from ..utils.train_utils import get_state_maybe_zero_3
+        
+        checkpoint_folder = f"{PREFIX_CHECKPOINT_DIR}-{self.state.global_step}"
+        output_dir = os.path.join(self.args.output_dir, checkpoint_folder)
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # 只在主进程保存
+        if self.args.local_rank in [-1, 0]:
+            unwrapped_model = unwrap_model(model)
+            
+            # 保存tokenizer和配置
+            self.tokenizer.save_pretrained(output_dir)
+            unwrapped_model.config.save_pretrained(output_dir)
+            
+            # 只保存connector权重
+            connector_state_dict = get_state_maybe_zero_3(
+                unwrapped_model.connector.named_parameters(), [''], False
+            )
+            connector_output_dir = os.path.join(output_dir, 'connector')
+            os.makedirs(connector_output_dir, exist_ok=True)
+            connector_path = os.path.join(connector_output_dir, 'pytorch_model.bin')
+            torch.save(connector_state_dict, connector_path)
+            
+            connector_size_mb = os.path.getsize(connector_path) / 1024 / 1024
+            logger.info(f"✓ Checkpoint saved: connector only ({connector_size_mb:.2f} MB) -> {output_dir}")
+            
+            # 管理checkpoint数量
+            self._rotate_checkpoints(use_mtime=False, output_dir=self.args.output_dir)
+    
+    def _rotate_checkpoints(self, use_mtime=False, output_dir=None) -> None:
+        """删除旧的checkpoints，只保留最新的N个"""
+        if self.args.save_total_limit is None or self.args.save_total_limit <= 0:
+            return
+        
+        checkpoints_sorted = self._sorted_checkpoints(use_mtime=use_mtime, output_dir=output_dir)
+        if len(checkpoints_sorted) <= self.args.save_total_limit:
+            return
+        
+        import shutil
+        for checkpoint in checkpoints_sorted[:-self.args.save_total_limit]:
+            logger.info(f"Deleting older checkpoint: {checkpoint}")
+            shutil.rmtree(checkpoint)
 
     def _get_train_sampler(self) -> Optional[torch.utils.data.Sampler]:
         if self.train_dataset is None or not has_length(self.train_dataset):
@@ -265,10 +310,26 @@ class DistillLLaVATrainer(Trainer):
         else:
             labels = None
 
+        # 获取teacher模型所在的设备
+        teacher_device = next(self.teacher_model.parameters()).device
+        
+        # 将输入数据移动到teacher模型所在的设备
+        teacher_inputs = {}
+        for k, v in inputs.items():
+            if isinstance(v, torch.Tensor):
+                teacher_inputs[k] = v.to(teacher_device)
+            else:
+                teacher_inputs[k] = v
+
         with torch.no_grad():
-            teacher_outputs, multimodal_teacher_labels, teacher_image_rela, _, teacher_rela, _, _ = self.teacher_model(**inputs)
-        # soft_label = inputs.pop('soft_label')
-        outputs, multimodal_labels, student_image_rela, _, student_rela,  num_images, spilt_sizes  = model(**inputs)
+            # 使用移动后的输入调用teacher模型
+            teacher_outputs, multimodal_teacher_labels, teacher_image_rela, _, teacher_rela, _, _ = self.teacher_model(**teacher_inputs)
+        
+        # Student模型前向传播
+        outputs, multimodal_labels, student_image_rela, _, student_rela, num_images, spilt_sizes = model(**inputs)
+        
+        # 获取student模型所在的设备（用于将teacher输出移动到正确设备）
+        student_device = outputs['logits'].device
 
         # Save past state if it exists
         # TODO: this needs to be fixed and made cleaner later.
@@ -298,15 +359,17 @@ class DistillLLaVATrainer(Trainer):
 
         _, _, voc_size = outputs['logits'].shape
         shift_student_logits = outputs['logits'][..., :-1, :].contiguous()
-        shift_teacher_logits = teacher_outputs['logits'][..., :-1, :].contiguous()
+        
+        # 将teacher的logits移动到student设备上进行loss计算
+        shift_teacher_logits = teacher_outputs['logits'][..., :-1, :].contiguous().to(student_device)
         
         shift_labels = multimodal_labels[..., 1:].contiguous()
         shift_labels = shift_labels.view(-1)
-        shift_labels = shift_labels.to(outputs['logits'].device)
+        shift_labels = shift_labels.to(student_device)
         
-        shift_teacher_labels = multimodal_teacher_labels[..., 1:].contiguous()
+        # 将teacher的labels也移动到student设备
+        shift_teacher_labels = multimodal_teacher_labels[..., 1:].contiguous().to(student_device)
         shift_teacher_labels = shift_teacher_labels.view(-1)
-        shift_teacher_labels = shift_teacher_labels.to(outputs['logits'].device)
 
 
         # # only Answers KL distill loss 
@@ -317,8 +380,8 @@ class DistillLLaVATrainer(Trainer):
         masked_teacher_logits = shift_teacher_logits.view(-1, voc_size)[teacher_mask.bool()]   
 
         if masked_teacher_logits.shape != masked_student_logits.shape:
-            print(masked_teacher_logits.shape, masked_student_logits.shape)
-            print(masked_teacher_logits.device, masked_student_logits.device)
+            print(f"[Warning] Shape mismatch: teacher={masked_teacher_logits.shape}, student={masked_student_logits.shape}")
+            print(f"[Warning] Devices: teacher={masked_teacher_logits.device}, student={masked_student_logits.device}")
             loss = outputs['loss']
         else:
             forward_distillation_loss = self.loss_fct(
@@ -330,8 +393,10 @@ class DistillLLaVATrainer(Trainer):
             
 
         if num_images == 1:
-            shift_STU_image_logits =  outputs['logits'][:, spilt_sizes[0][0] :spilt_sizes[0][0]+728]
-            shift_Tea_image_logits =  teacher_outputs['logits'][:, spilt_sizes[0][0] :spilt_sizes[0][0]+728, :]
+            shift_STU_image_logits = outputs['logits'][:, spilt_sizes[0][0]:spilt_sizes[0][0]+728]
+            # 将teacher的image logits也移动到student设备
+            shift_Tea_image_logits = teacher_outputs['logits'][:, spilt_sizes[0][0]:spilt_sizes[0][0]+728, :].to(student_device)
+            
             forward_visual_distillation = self.loss_fct(
                     nn.functional.log_softmax(shift_STU_image_logits.view(-1, voc_size), dim=-1),
                     nn.functional.softmax(shift_Tea_image_logits.view(-1, voc_size), dim=-1)
