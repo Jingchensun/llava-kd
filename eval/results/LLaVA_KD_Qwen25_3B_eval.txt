@@ -1,0 +1,2 @@
+SQA: Total: 4241, Correct: 838, Accuracy: 19.76%, IMG-Accuracy: 74.14%
+POPE: Accuracy: 0.4862448418156809, Precision: 0.5023923444976076, F1 score: 0.45751633986928103

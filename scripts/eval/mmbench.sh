@@ -1,23 +1,53 @@
 #!/bin/bash
 
+gpu_list="${CUDA_VISIBLE_DEVICES:-0}"
+IFS=',' read -ra GPULIST <<< "$gpu_list"
+
+CHUNKS=${#GPULIST[@]}
+
 SPLIT="mmbench_dev_en_20231003"
 
 MODEL_PATH=$1
 MODEL_NAME=$2
 EVAL_DIR="./eval_dataset"
 
-python3.12 -m llavakd.eval.model_vqa_mmbench \
-    --model-path $MODEL_PATH \
-    --question-file $EVAL_DIR/mmbench/$SPLIT.tsv \
-    --answers-file $EVAL_DIR/mmbench/answers/$SPLIT/$MODEL_NAME.jsonl \
-    --single-pred-prompt \
-    --temperature 0 \
-    --conv-mode phi
+for IDX in $(seq 0 $((CHUNKS-1))); do
+    CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python3.12 -m llavakd.eval.model_vqa_mmbench \
+        --model-path $MODEL_PATH \
+        --question-file $EVAL_DIR/mmbench/$SPLIT.tsv \
+        --answers-file $EVAL_DIR/mmbench/answers/$SPLIT/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl \
+        --num-chunks $CHUNKS \
+        --chunk-idx $IDX \
+        --single-pred-prompt \
+        --temperature 0 \
+        --conv-mode phi &
+done
+
+wait
+
+output_file=$EVAL_DIR/mmbench/answers/$SPLIT/$MODEL_NAME/merge.jsonl
+
+# Clear out the output file if it exists.
+> "$output_file"
+
+# Loop through the indices and concatenate each file.
+for IDX in $(seq 0 $((CHUNKS-1))); do
+    cat $EVAL_DIR/mmbench/answers/$SPLIT/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl >> "$output_file"
+done
 
 mkdir -p  $EVAL_DIR/mmbench/answers_upload/$SPLIT
+mkdir -p eval/results
 
-python3.12 scripts/convert_mmbench_for_submission.py \
+eval_output=$(python3.12 scripts/convert_mmbench_for_submission.py \
     --annotation-file $EVAL_DIR/mmbench/$SPLIT.tsv \
     --result-dir $EVAL_DIR/mmbench/answers/$SPLIT \
     --upload-dir $EVAL_DIR/mmbench/answers_upload/$SPLIT \
-    --experiment $MODEL_NAME
+    --experiment $MODEL_NAME 2>&1)
+
+echo "$eval_output"
+
+# Count results and save
+result_file="$EVAL_DIR/mmbench/answers_upload/$SPLIT/${MODEL_NAME}.xlsx"
+if [ -f "$result_file" ]; then
+    echo "MMBench: Results saved to ${result_file}" >> eval/results/${MODEL_NAME}_eval.txt
+fi

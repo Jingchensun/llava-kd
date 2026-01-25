@@ -38,5 +38,15 @@ done
 
 python3.12 scripts/convert_gqa_for_eval.py --src $output_file --dst $GQADIR/testdev_balanced_predictions.json
 
+mkdir -p eval/results
+
 cd $GQADIR
-python3.12 eval/eval.py --tier testdev_balanced
+eval_output=$(python3.12 eval/eval.py --tier testdev_balanced 2>&1)
+echo "$eval_output"
+
+cd -
+# Extract and save result
+accuracy_line=$(echo "$eval_output" | grep -i "accuracy\|score" | head -1)
+if [ -n "$accuracy_line" ]; then
+    echo "GQA: $accuracy_line" >> eval/results/${MODEL_NAME}_eval.txt
+fi
