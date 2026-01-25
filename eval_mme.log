@@ -1,0 +1,30 @@
+[2026-01-24 20:33:35,025] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/jsun/llava-kd/llavakd/eval/model_vqa_loader.py", line 149, in <module>
+    eval_model(args)
+  File "/home/jsun/llava-kd/llavakd/eval/model_vqa_loader.py", line 85, in eval_model
+    questions = [json.loads(q) for q in open(os.path.expanduser(args.question_file), "r")]
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './eval_dataset/eval/mme/llava_mme.jsonl'
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+scripts/eval/mme.sh: line 16: cd: ./eval_dataset/eval/mme: No such file or directory
+python3.12: can't open file '/home/jsun/llava-kd/convert_answer_to_mme.py': [Errno 2] No such file or directory
+scripts/eval/mme.sh: line 20: cd: eval_tool: No such file or directory
+python3.12: can't open file '/home/jsun/llava-kd/calculation.py': [Errno 2] No such file or directory

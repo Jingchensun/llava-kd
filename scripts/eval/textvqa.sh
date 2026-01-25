@@ -3,7 +3,7 @@
 
 MODEL_PATH=$1
 MODEL_NAME=$2
-EVAL_DIR="./eval_dataset/eval"
+EVAL_DIR="./eval_dataset"
 
 python3.12 -m llavakd.eval.model_vqa_loader \
     --model-path $MODEL_PATH \

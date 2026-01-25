@@ -36,19 +36,17 @@ def load_pretrained_model(model_name_or_path, load_type='hf', load_8bit=False, l
         kwargs['torch_dtype'] = torch.float16
     if model_name_or_path is not None and 'lora' not in model_name_or_path:
         
-        # for qwen1.5
-        # model = LLaVAKD.from_pretrained(model_name_or_path,low_cpu_mem_usage=True,torch_dtype=torch.float16)
+        # for qwen1.5 and qwen2.5
+        model = LLaVAKD.from_pretrained(model_name_or_path, low_cpu_mem_usage=True, torch_dtype=torch.float16)
 
-        # for qwen2.5
-        model_name_or_path = "Eval ckpts"
-        model_config = TinyLlavaConfig.from_pretrained(model_name_or_path)
-        
-        model = LLaVAKD(model_config)
-        model.language_model = model.language_model.from_pretrained(os.path.join(model_name_or_path, 'language_model'))
-        vision_tower_ckp = torch.load(os.path.join(model_name_or_path, 'vision_tower', 'pytorch_model.bin'), map_location=torch.device('cpu'))
-        model.vision_tower._vision_tower.load_state_dict(vision_tower_ckp)
-        connector_ckp = torch.load(os.path.join(model_name_or_path, 'connector', 'pytorch_model.bin'), map_location=torch.device('cpu'))
-        model.connector.load_state_dict(connector_ckp)
+        # # Alternative loading method for separated checkpoint structure
+        # model_config = TinyLlavaConfig.from_pretrained(model_name_or_path)
+        # model = LLaVAKD(model_config)
+        # model.language_model = model.language_model.from_pretrained(os.path.join(model_name_or_path, 'language_model'))
+        # vision_tower_ckp = torch.load(os.path.join(model_name_or_path, 'vision_tower', 'pytorch_model.bin'), map_location=torch.device('cpu'))
+        # model.vision_tower._vision_tower.load_state_dict(vision_tower_ckp)
+        # connector_ckp = torch.load(os.path.join(model_name_or_path, 'connector', 'pytorch_model.bin'), map_location=torch.device('cpu'))
+        # model.connector.load_state_dict(connector_ckp)
 
     elif model_name_or_path is not None and 'lora' in model_name_or_path:
         if os.path.exists(os.path.join(model_name_or_path, 'adapter_config.json')):

@@ -72,7 +72,7 @@ def eval_model(args):
                 image_sizes=image_sizes,
                 do_sample=False if args.temperature > 0 else False,
                 temperature=args.temperature,
-                max_new_tokens=1024,
+                max_new_tokens=128,  # 降低到128，选择题只需要生成短答案
                 use_cache=True,
                 pad_token_id=tokenizer.pad_token_id
 
@@ -86,7 +86,9 @@ def eval_model(args):
                                    "answer_id": ans_id,
                                    "model_id": args.model_path.split('/')[-1],
                                    "metadata": {}}) + "\n")
-        ans_file.flush()
+        # 每100个样本刷新一次，减少I/O开销
+        if (i + 1) % 100 == 0:
+            ans_file.flush()
     ans_file.close()
 
 if __name__ == "__main__":

@@ -6,11 +6,11 @@ IFS=',' read -ra GPULIST <<< "$gpu_list"
 CHUNKS=${#GPULIST[@]}
 
 SPLIT="llava_gqa_testdev_balanced"
-GQADIR="./eval_dataset/eval/gqa"
+GQADIR="./eval_dataset/gqa"
 
 MODEL_PATH=$1
 MODEL_NAME=$2
-EVAL_DIR="./eval_dataset/eval"
+EVAL_DIR="./eval_dataset"
 
 for IDX in $(seq 0 $((CHUNKS-1))); do
     CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python3.12 -m llavakd.eval.model_vqa_loader \

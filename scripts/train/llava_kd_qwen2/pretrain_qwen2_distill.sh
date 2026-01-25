@@ -26,7 +26,7 @@ cd "$(dirname "$0")/../../.."
 # Add project root to PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
-deepspeed --include localhost:0,1,2,3 --master_port 29501 llavakd/train/train_distill_qwen2.py \
+deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) llavakd/train/train_distill_qwen2.py \
     --deepspeed scripts/zero2.json \
     --data_path  $DATA_PATH\
     --image_folder $IMAGE_PATH \
@@ -52,8 +52,8 @@ deepspeed --include localhost:0,1,2,3 --master_port 29501 llavakd/train/train_di
     --gradient_accumulation_steps 16 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
-    --save_steps 5000 \
-    --save_total_limit 1 \
+    --save_steps 2000 \
+    --save_total_limit 10 \
     --learning_rate 1e-3 \
     --weight_decay 0. \
     --warmup_ratio 0.03 \

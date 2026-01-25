@@ -15,8 +15,10 @@ from llavakd.data.dataset import make_supervised_data_module
 IS_TOKENIZER_GREATER_THAN_0_14 = version.parse(tokenizers.__version__) >= version.parse('0.14')
 
 import wandb
-os.environ["WANDB_API_KEY"] = 'YOUR API WANDB KEY'
-os.environ["WANDB_MODE"] = "offline"
+# WandB配置：在sbatch脚本中设置环境变量
+# 或使用: wandb login (保存到 ~/.netrc)
+# os.environ["WANDB_API_KEY"] = 'YOUR_API_KEY'  # 不建议硬编码
+# os.environ["WANDB_MODE"] = "online"  # 在sbatch中设置
 
 def load_settings(model_arguments, data_arguments, training_arguments):
     model_arguments.tune_type_connector = training_arguments.tune_type_connector

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-SPLIT="MMBench_DEV_EN_legacy"
+SPLIT="mmbench_dev_en_20231003"
 
 MODEL_PATH=$1
 MODEL_NAME=$2
-EVAL_DIR="./eval_dataset/eval"
+EVAL_DIR="./eval_dataset"
 
 python3.12 -m llavakd.eval.model_vqa_mmbench \
     --model-path $MODEL_PATH \
