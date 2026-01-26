@@ -29,8 +29,36 @@ class LazySupervisedDataset(Dataset):
         super(LazySupervisedDataset, self).__init__()
         list_data_dict = json.load(open(data_path, "r"))
 
+        # 预筛选：检查图片是否存在
+        image_folder = data_args.image_folder
+        valid_data = []
+        missing_images = []
+        
+        print(f"[Dataset] 开始预筛选，检查图片是否存在...")
+        for sample in list_data_dict:
+            if 'image' in sample:
+                image_path = os.path.join(image_folder, sample['image'])
+                if os.path.exists(image_path):
+                    valid_data.append(sample)
+                else:
+                    missing_images.append(sample['image'])
+            else:
+                # 纯文本样本，保留
+                valid_data.append(sample)
+        
+        # 保存缺失图片列表
+        if missing_images:
+            data_dir = os.path.dirname(data_path)
+            missing_file = os.path.join(data_dir, 'missing_data.txt')
+            with open(missing_file, 'w') as f:
+                for img in missing_images:
+                    f.write(f"{img}\n")
+            print(f"[Dataset] 发现 {len(missing_images)} 个缺失图片，已保存到: {missing_file}")
+        
+        print(f"[Dataset] 预筛选完成: 原始样本 {len(list_data_dict)}, 有效样本 {len(valid_data)}, 缺失 {len(missing_images)}")
+
         self.tokenizer = tokenizer
-        self.list_data_dict = list_data_dict
+        self.list_data_dict = valid_data  # 使用筛选后的数据
         self.data_args = data_args
         self.text_preprocess = TextPreprocess(tokenizer, data_args.conv_version)
         self.image_preprocess = ImagePreprocess(data_args.image_processor, data_args)
