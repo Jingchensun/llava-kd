@@ -45,6 +45,6 @@ echo "Pretrain checkpoint: $PRETRAIN_CKPT_PATH"
 echo "Output: ./checkpoints/${VERSION}-sft"
 echo "=========================================="
 
-bash scripts/train/llava_kd_qwen2/finetune_sft_student_only.sh \
+bash finetune_sft_student_only.sh \
     "$DATA_PATH" "$IMAGE_PATH" "$LLM_VERSION" "$VT_VERSION" "$VT_VERSION2" \
     "$CN_VERSION" "$VERSION" "$TRAIN_RECIPE" "$MODEL_MAX_LENGTH" "$PRETRAIN_CKPT_PATH"

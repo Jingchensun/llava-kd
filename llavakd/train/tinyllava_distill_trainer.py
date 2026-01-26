@@ -144,7 +144,7 @@ class DistillLLaVATrainer(Trainer):
 
     def _save_checkpoint(self, model, trial, metrics=None):
         """
-        中间checkpoint只保存connector权重，节省存储空间。
+        中间 checkpoint 保存 LLM + Connector 权重。
         最终完整模型由 training_recipe.save() 保存。
         """
         from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
@@ -158,11 +158,11 @@ class DistillLLaVATrainer(Trainer):
         if self.args.local_rank in [-1, 0]:
             unwrapped_model = unwrap_model(model)
             
-            # 保存tokenizer和配置
+            # 保存 tokenizer 和配置
             self.tokenizer.save_pretrained(output_dir)
             unwrapped_model.config.save_pretrained(output_dir)
             
-            # 只保存connector权重
+            # 保存 Connector 权重
             connector_state_dict = get_state_maybe_zero_3(
                 unwrapped_model.connector.named_parameters(), [''], False
             )
@@ -170,11 +170,22 @@ class DistillLLaVATrainer(Trainer):
             os.makedirs(connector_output_dir, exist_ok=True)
             connector_path = os.path.join(connector_output_dir, 'pytorch_model.bin')
             torch.save(connector_state_dict, connector_path)
-            
             connector_size_mb = os.path.getsize(connector_path) / 1024 / 1024
-            logger.info(f"✓ Checkpoint saved: connector only ({connector_size_mb:.2f} MB) -> {output_dir}")
             
-            # 管理checkpoint数量
+            # 保存 LLM 权重
+            llm_state_dict = get_state_maybe_zero_3(
+                unwrapped_model.language_model.named_parameters(), [''], False
+            )
+            llm_output_dir = os.path.join(output_dir, 'language_model')
+            os.makedirs(llm_output_dir, exist_ok=True)
+            llm_path = os.path.join(llm_output_dir, 'pytorch_model.bin')
+            torch.save(llm_state_dict, llm_path)
+            llm_size_mb = os.path.getsize(llm_path) / 1024 / 1024
+            
+            total_size_mb = connector_size_mb + llm_size_mb
+            logger.info(f"✓ Checkpoint saved: connector ({connector_size_mb:.2f} MB) + LLM ({llm_size_mb:.2f} MB) = {total_size_mb:.2f} MB -> {output_dir}")
+            
+            # 管理 checkpoint 数量
             self._rotate_checkpoints(use_mtime=False, output_dir=self.args.output_dir)
     
     def _rotate_checkpoints(self, use_mtime=False, output_dir=None) -> None:

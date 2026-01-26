@@ -1,6 +1,15 @@
 #!/bin/bash
-if [ $# -ne 12 ]; then
-    echo "Usage: $0 <DATA_PATH> <IMAGE_PATH> <TEACHER_PATH> <TEACHER_NAME> <LLM_VERSION> <VT_VERSION> <VT_VERSION2> <CN_VERSION> <CONV_VERSION> <VERSION> <TRAIN_RECIPE> <MODEL_MAX_LENGTH>"
+# ============================================================
+# Distill After SFT 训练脚本
+# - Teacher: 从 HuggingFace 加载
+# - Student Vision Tower: 从 HuggingFace 加载 (frozen)
+# - Student LLM + Connector: 从 SFT checkpoint 加载 (full tuning)
+# - 中间 checkpoint: 保存 LLM + Connector 权重
+# - 最终保存: 保存完整模型
+# ============================================================
+
+if [ $# -ne 10 ]; then
+    echo "Usage: $0 <DATA_PATH> <IMAGE_PATH> <LLM_VERSION> <VT_VERSION> <VT_VERSION2> <CN_VERSION> <VERSION> <TRAIN_RECIPE> <MODEL_MAX_LENGTH> <SFT_CKPT_PATH>"
     exit 1
 fi
 
@@ -11,12 +20,10 @@ LLM_VERSION="$3"
 VT_VERSION="$4"
 VT_VERSION2="$5"
 CN_VERSION="$6"
-CONV_VERSION="$7"
-VERSION="$8"
-TRAIN_RECIPE="$9"
-MODEL_MAX_LENGTH="${10}"
-TEACHER_PATH="${11}"
-TEACHER_NAME="${12}"
+VERSION="$7"
+TRAIN_RECIPE="$8"
+MODEL_MAX_LENGTH="$9"
+SFT_CKPT_PATH="${10}"
 
 VT_VARIANT="${VT_VERSION#*/}"
 LLM_VARIANT="${LLM_VERSION#*/}"
@@ -27,14 +34,25 @@ cd "$(dirname "$0")/../../.."
 # Add project root to PYTHONPATH
 export PYTHONPATH="${PWD}:${PYTHONPATH}"
 
-deepspeed --include localhost:0,1,2,3,4,5,6,7 --master_port 29502 llavakd/train/train_distill_after_qwen2_sft.py \
-    --deepspeed scripts/zero3.json \
+# 创建输出目录并设置日志文件
+OUTPUT_DIR="./checkpoints/${VERSION}"
+mkdir -p "$OUTPUT_DIR"
+LOG_FILE="${OUTPUT_DIR}/train_$(date +%Y%m%d_%H%M%S).log"
+
+echo "=========================================="
+echo "Distill After SFT Training"
+echo "=========================================="
+echo "SFT checkpoint: $SFT_CKPT_PATH"
+echo "Output directory: $OUTPUT_DIR"
+echo "Log file: $LOG_FILE"
+echo "=========================================="
+
+deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) llavakd/train/train_distill_after_qwen2_sft.py \
+    --deepspeed scripts/zero2.json \
     --data_path  $DATA_PATH \
     --image_folder $IMAGE_PATH \
-    --teacher_pretrained_dir $TEACHER_PATH \
-    --teacher_pretrained_name $TEACHER_NAME \
     --is_multimodal True \
-    --conv_version $CONV_VERSION \
+    --conv_version qwen2_base \
     --model_name_or_path $LLM_VERSION \
     --vision_tower $VT_VERSION \
     --vision_tower2 "$VT_VERSION2" \
@@ -45,30 +63,33 @@ deepspeed --include localhost:0,1,2,3,4,5,6,7 --master_port 29502 llavakd/train/
     --bf16 True \
     --training_recipe $TRAIN_RECIPE \
     --tune_type_llm full \
-    --tune_type_vision_tower frozen\
+    --tune_type_vision_tower frozen \
     --tune_vision_tower_from_layer 0 \
     --tune_type_connector full \
     --group_by_modality_length True \
-    --pretrained_model_path checkpoints/qwen2_distill_llava_factory/tiny-llava-Qwen1.5-0.5B-siglip-so400m-patch14-384-base-finetune \
-    --output_dir checkpoints/qwen25_distill_llava_factory/tiny-llava-${LLM_VARIANT}-${VT_VARIANT}-${VERSION}-3B_to_05B-DFT \
+    --pretrained_model_path $SFT_CKPT_PATH \
+    --output_dir $OUTPUT_DIR \
     --num_train_epochs 1 \
+    --max_steps 15 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 4 \
     --gradient_accumulation_steps 16 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
-    --save_steps 1000 \
+    --save_steps 10 \
     --save_total_limit 5 \
     --learning_rate 2e-5 \
     --weight_decay 0. \
     --warmup_ratio 0.03 \
     --lr_scheduler_type "cosine" \
     --logging_steps 1 \
-    --tf32 False \
+    --tf32 True \
     --model_max_length $MODEL_MAX_LENGTH \
     --gradient_checkpointing True \
     --dataloader_num_workers 8 \
+    --dataloader_pin_memory True \
     --lazy_preprocess True \
     --report_to tensorboard \
     --tokenizer_use_fast False \
-    --run_name tiny-llava-${LLM_VARIANT}-${VT_VARIANT}-${VERSION}-finetune
+    --run_name ${VERSION} \
+    2>&1 | tee -a "$LOG_FILE"

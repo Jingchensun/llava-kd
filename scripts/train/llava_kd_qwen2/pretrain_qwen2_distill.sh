@@ -51,14 +51,14 @@ deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) ll
     --tune_type_vision_tower frozen \
     --tune_vision_tower_from_layer 0 \
     --tune_type_connector full \
-    --output_dir ./checkpoints/${VERSION}-pretrain \
+    --output_dir ./checkpoints/${VERSION} \
     --num_train_epochs 1 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 4 \
     --gradient_accumulation_steps 16 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
-    --save_steps 1000 \
+    --save_steps 2000 \
     --save_total_limit 5 \
     --load_best_model_at_end False \
     --learning_rate 1e-3 \
@@ -74,5 +74,5 @@ deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) ll
     --lazy_preprocess True \
     --report_to tensorboard \
     --tokenizer_use_fast False \
-    --run_name ${VERSION}-pretrain \
+    --run_name ${VERSION} \
     2>&1 | tee -a "$LOG_FILE"
