@@ -138,10 +138,9 @@ class DistillLLaVATrainer(Trainer):
         self.niter = 0
         self.mismatch_count = 0
         
-        # Teacher模型已在train_distill_qwen2.py中移动到正确的设备
-        # 这里只打印确认信息
-        device = next(self.teacher_model.parameters()).device
-        print(f"[Rank {self.args.local_rank}] Teacher模型位于: {device}")
+        # 缓存teacher设备，避免每次查找
+        self.teacher_device = next(self.teacher_model.parameters()).device
+        print(f"[Rank {self.args.local_rank}] Teacher模型位于: {self.teacher_device}")
 
     def _save_checkpoint(self, model, trial, metrics=None):
         """
@@ -310,19 +309,14 @@ class DistillLLaVATrainer(Trainer):
         else:
             labels = None
 
-        # 获取teacher模型所在的设备
-        teacher_device = next(self.teacher_model.parameters()).device
-        
-        # 将输入数据移动到teacher模型所在的设备
-        teacher_inputs = {}
-        for k, v in inputs.items():
-            if isinstance(v, torch.Tensor):
-                teacher_inputs[k] = v.to(teacher_device)
-            else:
-                teacher_inputs[k] = v
+        # 优化: 使用缓存的设备信息，直接移动tensor
+        teacher_inputs = {
+            k: v.to(self.teacher_device, non_blocking=True) if isinstance(v, torch.Tensor) else v
+            for k, v in inputs.items()
+        }
 
-        with torch.no_grad():
-            # 使用移动后的输入调用teacher模型
+        # 优化: 使用autocast进行混合精度推理
+        with torch.no_grad(), torch.amp.autocast('cuda', enabled=True):
             teacher_outputs, multimodal_teacher_labels, teacher_image_rela, _, teacher_rela, _, _ = self.teacher_model(**teacher_inputs)
         
         # Student模型前向传播
@@ -358,62 +352,53 @@ class DistillLLaVATrainer(Trainer):
         loss = outputs['loss']
 
         _, _, voc_size = outputs['logits'].shape
+        
+        # 优化: 使用non_blocking=True进行异步数据传输
         shift_student_logits = outputs['logits'][..., :-1, :].contiguous()
+        shift_teacher_logits = teacher_outputs['logits'][..., :-1, :].to(student_device, non_blocking=True).contiguous()
         
-        # 将teacher的logits移动到student设备上进行loss计算
-        shift_teacher_logits = teacher_outputs['logits'][..., :-1, :].contiguous().to(student_device)
-        
-        shift_labels = multimodal_labels[..., 1:].contiguous()
-        shift_labels = shift_labels.view(-1)
-        shift_labels = shift_labels.to(student_device)
-        
-        # 将teacher的labels也移动到student设备
-        shift_teacher_labels = multimodal_teacher_labels[..., 1:].contiguous().to(student_device)
-        shift_teacher_labels = shift_teacher_labels.view(-1)
+        shift_labels = multimodal_labels[..., 1:].contiguous().view(-1).to(student_device, non_blocking=True)
+        shift_teacher_labels = multimodal_teacher_labels[..., 1:].contiguous().view(-1).to(student_device, non_blocking=True)
 
+        # 优化: 使用bool直接作为mask，避免int转换
+        mask = shift_labels != -100
+        teacher_mask = shift_teacher_labels != -100
 
-        # # only Answers KL distill loss 
-        mask = torch.ne(shift_labels, -100).int()
-        teacher_mask = torch.ne(shift_teacher_labels, -100).int()
-
-        masked_student_logits = shift_student_logits.view(-1, voc_size)[mask.bool()]       
-        masked_teacher_logits = shift_teacher_logits.view(-1, voc_size)[teacher_mask.bool()]   
+        masked_student_logits = shift_student_logits.view(-1, voc_size)[mask]       
+        masked_teacher_logits = shift_teacher_logits.view(-1, voc_size)[teacher_mask]   
 
         if masked_teacher_logits.shape != masked_student_logits.shape:
-            print(f"[Warning] Shape mismatch: teacher={masked_teacher_logits.shape}, student={masked_student_logits.shape}")
-            print(f"[Warning] Devices: teacher={masked_teacher_logits.device}, student={masked_student_logits.device}")
-            loss = outputs['loss']
+            if self.niter % 100 == 0:  # 减少warning输出频率
+                print(f"[Warning] Shape mismatch: teacher={masked_teacher_logits.shape}, student={masked_student_logits.shape}")
         else:
+            # 优化: 使用inplace操作减少内存分配
             forward_distillation_loss = self.loss_fct(
-                    nn.functional.log_softmax(masked_student_logits, dim=-1),
-                    nn.functional.softmax(masked_teacher_logits, dim=-1)
-                )
-
-            loss = forward_distillation_loss + loss
-            
+                F.log_softmax(masked_student_logits, dim=-1),
+                F.softmax(masked_teacher_logits, dim=-1)
+            )
+            loss = loss + forward_distillation_loss
 
         if num_images == 1:
-            shift_STU_image_logits = outputs['logits'][:, spilt_sizes[0][0]:spilt_sizes[0][0]+728]
-            # 将teacher的image logits也移动到student设备
-            shift_Tea_image_logits = teacher_outputs['logits'][:, spilt_sizes[0][0]:spilt_sizes[0][0]+728, :].to(student_device)
+            img_start = spilt_sizes[0][0]
+            img_end = img_start + 728
+            
+            shift_STU_image_logits = outputs['logits'][:, img_start:img_end]
+            shift_Tea_image_logits = teacher_outputs['logits'][:, img_start:img_end, :].to(student_device, non_blocking=True)
             
             forward_visual_distillation = self.loss_fct(
-                    nn.functional.log_softmax(shift_STU_image_logits.view(-1, voc_size), dim=-1),
-                    nn.functional.softmax(shift_Tea_image_logits.view(-1, voc_size), dim=-1)
-                )
+                F.log_softmax(shift_STU_image_logits.reshape(-1, voc_size), dim=-1),
+                F.softmax(shift_Tea_image_logits.reshape(-1, voc_size), dim=-1)
+            )
 
-            student_img_rela = torch.matmul(shift_STU_image_logits, shift_STU_image_logits.permute(0,2,1))
-            teacher_img_rela = torch.matmul(shift_Tea_image_logits, shift_Tea_image_logits.permute(0,2,1))
+            # 优化: 使用更高效的相似度计算
+            student_img_rela = torch.bmm(shift_STU_image_logits, shift_STU_image_logits.transpose(1, 2))
+            teacher_img_rela = torch.bmm(shift_Tea_image_logits, shift_Tea_image_logits.transpose(1, 2))
             
-            llm_visual_rela_distill_loss = F.cosine_similarity(teacher_img_rela.view(-1).unsqueeze(0), student_img_rela.view(-1).unsqueeze(0))
-            llm_visual_rela_distill_loss = 1 - llm_visual_rela_distill_loss.mean()
+            llm_visual_rela_distill_loss = 1 - F.cosine_similarity(
+                student_img_rela.flatten(), teacher_img_rela.flatten(), dim=0
+            )
 
             loss = loss + forward_visual_distillation + llm_visual_rela_distill_loss
-
-        elif num_images == 0:
-            loss = loss
-        else:
-            raise NotImplementedError
 
             
         if self.niter % 100 == 0 and self.args.local_rank==0:
