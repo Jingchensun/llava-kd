@@ -33,7 +33,7 @@ MODEL_MAX_LENGTH=2048                           # max sequence length
 # ============== Pretrain Checkpoint 路径 ==============
 # 指定 pretrain 阶段保存的 checkpoint 路径，用于加载 connector 权重
 # 注意: 需要指向具体的 checkpoint 目录 (如 checkpoint-50)，不是父目录
-PRETRAIN_CKPT_PATH=./checkpoints/qwen25-0_5b-pretrain/checkpoint-50
+PRETRAIN_CKPT_PATH=./checkpoints/qwen25-0_5b-pretrain
 
 # ============== 开始训练 ==============
 echo "=========================================="

@@ -70,6 +70,7 @@ deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) ll
     --pretrained_model_path $PRETRAIN_CKPT_PATH \
     --output_dir $OUTPUT_DIR \
     --num_train_epochs 1 \
+    --max_steps 15 \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 4 \
     --gradient_accumulation_steps 16 \

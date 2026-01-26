@@ -76,8 +76,8 @@ deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) ll
     --gradient_accumulation_steps 16 \
     --evaluation_strategy "no" \
     --save_strategy "steps" \
-    --save_steps 10 \
-    --save_total_limit 5 \
+    --save_steps 2000 \
+    --save_total_limit 6 \
     --learning_rate 2e-5 \
     --weight_decay 0. \
     --warmup_ratio 0.03 \
