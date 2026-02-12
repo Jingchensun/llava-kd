@@ -1,0 +1,683 @@
+nohup: ignoring input
+训练日志将保存到: ./checkpoints/qwen25-0_5b-pretrain/train_20260126_000354.log
+[2026-01-26 00:03:56,986] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[2026-01-26 00:03:59,088] [WARNING] [runner.py:202:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2026-01-26 00:03:59,088] [INFO] [runner.py:568:main] cmd = /home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMSwgMiwgM119 --master_addr=127.0.0.1 --master_port=29736 --enable_each_rank_log=None llavakd/train/train_distill_qwen2.py --deepspeed scripts/zero2.json --data_path /home/jsun/llava-kd/dataset/blip_laion_cc_sbu_558k.json --image_folder /home/jsun/llava-kd/dataset/llava/llava_pretrain/images --is_multimodal True --conv_version pretrain --model_name_or_path Qwen/Qwen2.5-0.5B --vision_tower google/siglip-so400m-patch14-384 --vision_tower2  --connector_type mlp2x_gelu --mm_vision_select_layer -2 --image_aspect_ratio square --attn_implementation flash_attention_2 --bf16 True --training_recipe common --tune_type_llm frozen --tune_type_vision_tower frozen --tune_vision_tower_from_layer 0 --tune_type_connector full --output_dir ./checkpoints/qwen25-0_5b-pretrain --num_train_epochs 1 --per_device_train_batch_size 1 --per_device_eval_batch_size 4 --gradient_accumulation_steps 16 --evaluation_strategy no --save_strategy steps --save_steps 2000 --save_total_limit 5 --load_best_model_at_end False --learning_rate 1e-3 --weight_decay 0. --warmup_ratio 0.03 --lr_scheduler_type cosine --logging_steps 1 --tf32 True --model_max_length 2048 --gradient_checkpointing True --dataloader_num_workers 8 --dataloader_pin_memory True --lazy_preprocess True --report_to tensorboard --tokenizer_use_fast False --run_name qwen25-0_5b-pretrain
+[2026-01-26 00:04:00,499] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+[2026-01-26 00:04:02,092] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1, 2, 3]}
+[2026-01-26 00:04:02,092] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=4, node_rank=0
+[2026-01-26 00:04:02,092] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1, 2, 3]})
+[2026-01-26 00:04:02,092] [INFO] [launch.py:164:main] dist_world_size=4
+[2026-01-26 00:04:02,092] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1,2,3
+[2026-01-26 00:04:02,093] [INFO] [launch.py:256:main] process 1777773 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_qwen2.py', '--local_rank=0', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/blip_laion_cc_sbu_558k.json', '--image_folder', '/home/jsun/llava-kd/dataset/llava/llava_pretrain/images', '--is_multimodal', 'True', '--conv_version', 'pretrain', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'frozen', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--output_dir', './checkpoints/qwen25-0_5b-pretrain', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '5', '--load_best_model_at_end', 'False', '--learning_rate', '1e-3', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-pretrain']
+[2026-01-26 00:04:02,093] [INFO] [launch.py:256:main] process 1777774 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_qwen2.py', '--local_rank=1', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/blip_laion_cc_sbu_558k.json', '--image_folder', '/home/jsun/llava-kd/dataset/llava/llava_pretrain/images', '--is_multimodal', 'True', '--conv_version', 'pretrain', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'frozen', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--output_dir', './checkpoints/qwen25-0_5b-pretrain', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '5', '--load_best_model_at_end', 'False', '--learning_rate', '1e-3', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-pretrain']
+[2026-01-26 00:04:02,093] [INFO] [launch.py:256:main] process 1777775 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_qwen2.py', '--local_rank=2', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/blip_laion_cc_sbu_558k.json', '--image_folder', '/home/jsun/llava-kd/dataset/llava/llava_pretrain/images', '--is_multimodal', 'True', '--conv_version', 'pretrain', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'frozen', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--output_dir', './checkpoints/qwen25-0_5b-pretrain', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '5', '--load_best_model_at_end', 'False', '--learning_rate', '1e-3', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-pretrain']
+[2026-01-26 00:04:02,094] [INFO] [launch.py:256:main] process 1777776 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_qwen2.py', '--local_rank=3', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/blip_laion_cc_sbu_558k.json', '--image_folder', '/home/jsun/llava-kd/dataset/llava/llava_pretrain/images', '--is_multimodal', 'True', '--conv_version', 'pretrain', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'frozen', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--output_dir', './checkpoints/qwen25-0_5b-pretrain', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '5', '--load_best_model_at_end', 'False', '--learning_rate', '1e-3', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-pretrain']
+[2026-01-26 00:04:07,541] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-01-26 00:04:07,551] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-01-26 00:04:07,567] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[2026-01-26 00:04:07,631] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+[Rank 0] Loading teacher model: Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+[Rank 2] Loading teacher model: Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+[Rank 3] Loading teacher model: Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+[Rank 1] Loading teacher model: Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:07<00:07,  7.86s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:08<00:08,  8.54s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:08<00:08,  8.62s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:08<00:08,  8.76s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:16<00:00,  8.18s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:16<00:00,  8.13s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.53s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.54s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.64s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.62s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.58s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.60s/it]
+[Rank 2] Teacher model loaded to cuda:2
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+[Rank 1] Teacher model loaded to cuda:1
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+[Rank 0] Teacher model loaded to cuda:0
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+[Rank 3] Teacher model loaded to cuda:3
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Student vision tower loaded successfully
+Loading student LLM from HuggingFace: Qwen/Qwen2.5-0.5B
+Student vision tower loaded successfully
+Loading student LLM from HuggingFace: Qwen/Qwen2.5-0.5B
+Student vision tower loaded successfully
+Loading student LLM from HuggingFace: Qwen/Qwen2.5-0.5B
+Student vision tower loaded successfully
+Loading student LLM from HuggingFace: Qwen/Qwen2.5-0.5B
+Student LLM loaded successfully
+[2026-01-26 00:04:50,055] [INFO] [comm.py:637:init_distributed] cdb=None
+Student LLM loaded successfully
+[2026-01-26 00:04:53,990] [INFO] [comm.py:637:init_distributed] cdb=None
+[2026-01-26 00:04:53,990] [INFO] [comm.py:668:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+Student LLM loaded successfully
+[2026-01-26 00:04:54,080] [INFO] [comm.py:637:init_distributed] cdb=None
+Student LLM loaded successfully
+[2026-01-26 00:04:54,090] [INFO] [comm.py:637:init_distributed] cdb=None
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+wandb: WARNING The anonymous setting has no effect and will be removed in a future version.
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: jingchensun (jsun39) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.24.0
+wandb: Run data is saved locally in wandb/wandb/run-20260126_000457-so84ruh1
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run Qwen2.5-0.5B-siglip-so400m-patch14-384
+wandb: ⭐️ View project at https://wandb.ai/jsun39/DistillTinyLLaVA
+wandb: 🚀 View run at https://wandb.ai/jsun39/DistillTinyLLaVA/runs/so84ruh1
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Vision tower weights loaded from google/siglip-so400m-patch14-384
+Vision tower weights loaded from google/siglip-so400m-patch14-384
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Vision tower weights loaded from google/siglip-so400m-patch14-384
+Vision tower weights loaded from google/siglip-so400m-patch14-384
+LLM weights loaded from Qwen/Qwen2.5-0.5B
+Connector initialized randomly
+LLM weights loaded from Qwen/Qwen2.5-0.5B
+Connector initialized randomly
+[Dataset] 开始预筛选，检查图片是否存在...
+[Dataset] 开始预筛选，检查图片是否存在...
+LLM weights loaded from Qwen/Qwen2.5-0.5B
+Connector initialized randomly
+LLM weights loaded from Qwen/Qwen2.5-0.5B
+Connector initialized randomly
+[Dataset] 开始预筛选，检查图片是否存在...
+[Dataset] 开始预筛选，检查图片是否存在...
+[Dataset] 预筛选完成: 原始样本 558128, 有效样本 558128, 缺失 0[Dataset] 预筛选完成: 原始样本 558128, 有效样本 558128, 缺失 0[Dataset] 预筛选完成: 原始样本 558128, 有效样本 558128, 缺失 0[Dataset] 预筛选完成: 原始样本 558128, 有效样本 558128, 缺失 0
+
+
+
+2026-01-26 00:07:01,082 | INFO: Total Parameters: 924095168, Total Trainable Parameters: 1836800
+2026-01-26 00:07:01,082 | INFO: Trainable Parameters:
+connector._connector.0.weight: 1032192 parameters
+connector._connector.0.bias: 896 parameters
+connector._connector.2.weight: 802816 parameters
+connector._connector.2.bias: 896 parameters
+[Rank 2] Teacher模型位于: cuda:2
+[Rank 1] Teacher模型位于: cuda:1[Rank 3] Teacher模型位于: cuda:3
+
+[Rank 0] Teacher模型位于: cuda:0
+  0%|          | 0/8720 [00:00<?, ?it/s]/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/torch/utils/checkpoint.py:87: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/torch/utils/checkpoint.py:87: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/torch/utils/checkpoint.py:87: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py:745: UserWarning: torch.utils.checkpoint: the use_reentrant parameter should be passed explicitly. In version 2.5 we will raise an exception if use_reentrant is not passed. use_reentrant=False is recommended, but if you need to preserve the current default behavior, you can pass use_reentrant=True. Refer to docs for more details on the differences between the two variants.
+  return fn(*args, **kwargs)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/torch/utils/checkpoint.py:87: UserWarning: None of the inputs have requires_grad=True. Gradients will be None
+  warnings.warn(
+  0%|          | 1/8720 [00:04<11:11:23,  4.62s/it]                                                   {'loss': 19.7341, 'grad_norm': 80.07755279541016, 'learning_rate': 3.816793893129771e-06, 'epoch': 0.0}
+  0%|          | 1/8720 [00:07<11:11:23,  4.62s/it]  0%|          | 2/8720 [00:09<11:58:20,  4.94s/it]                                                   {'loss': 19.5734, 'grad_norm': 83.48163604736328, 'learning_rate': 7.633587786259541e-06, 'epoch': 0.0}
+  0%|          | 2/8720 [00:09<11:58:20,  4.94s/it]  0%|          | 3/8720 [00:11<8:55:54,  3.69s/it]                                                   {'loss': 19.5532, 'grad_norm': 71.23897552490234, 'learning_rate': 1.1450381679389314e-05, 'epoch': 0.0}
+  0%|          | 3/8720 [00:11<8:55:54,  3.69s/it]  0%|          | 4/8720 [00:14<7:24:44,  3.06s/it]                                                  {'loss': 19.5865, 'grad_norm': 71.26925659179688, 'learning_rate': 1.5267175572519083e-05, 'epoch': 0.0}
+  0%|          | 4/8720 [00:14<7:24:44,  3.06s/it]  0%|          | 5/8720 [00:16<6:39:15,  2.75s/it]                                                  {'loss': 19.5988, 'grad_norm': 82.93574523925781, 'learning_rate': 1.9083969465648855e-05, 'epoch': 0.0}
+  0%|          | 5/8720 [00:16<6:39:15,  2.75s/it]  0%|          | 6/8720 [00:18<6:09:22,  2.54s/it]                                                  {'loss': 18.7345, 'grad_norm': 65.81330108642578, 'learning_rate': 2.2900763358778628e-05, 'epoch': 0.0}
+  0%|          | 6/8720 [00:18<6:09:22,  2.54s/it]  0%|          | 7/8720 [00:20<5:47:11,  2.39s/it]                                                  {'loss': 18.9761, 'grad_norm': 68.5459976196289, 'learning_rate': 2.6717557251908397e-05, 'epoch': 0.0}
+  0%|          | 7/8720 [00:20<5:47:11,  2.39s/it]  0%|          | 8/8720 [00:22<5:49:21,  2.41s/it]                                                  {'loss': 17.5094, 'grad_norm': 63.715431213378906, 'learning_rate': 3.0534351145038166e-05, 'epoch': 0.0}
+  0%|          | 8/8720 [00:22<5:49:21,  2.41s/it]  0%|          | 9/8720 [00:25<5:39:29,  2.34s/it]                                                  {'loss': 16.7471, 'grad_norm': 46.55540084838867, 'learning_rate': 3.435114503816794e-05, 'epoch': 0.0}
+  0%|          | 9/8720 [00:25<5:39:29,  2.34s/it]  0%|          | 10/8720 [00:27<5:37:27,  2.32s/it]                                                   {'loss': 16.3412, 'grad_norm': 170.7764434814453, 'learning_rate': 3.816793893129771e-05, 'epoch': 0.0}
+  0%|          | 10/8720 [00:27<5:37:27,  2.32s/it]  0%|          | 11/8720 [00:29<5:28:42,  2.26s/it]                                                   {'loss': 16.4598, 'grad_norm': 67.17981719970703, 'learning_rate': 4.198473282442748e-05, 'epoch': 0.0}
+  0%|          | 11/8720 [00:29<5:28:42,  2.26s/it]  0%|          | 12/8720 [00:31<5:21:38,  2.22s/it]                                                   {'loss': 16.5878, 'grad_norm': 89.36656951904297, 'learning_rate': 4.5801526717557256e-05, 'epoch': 0.0}
+  0%|          | 12/8720 [00:31<5:21:38,  2.22s/it]  0%|          | 13/8720 [00:33<5:20:54,  2.21s/it]                                                   {'loss': 16.0294, 'grad_norm': 91.4879150390625, 'learning_rate': 4.9618320610687025e-05, 'epoch': 0.0}
+  0%|          | 13/8720 [00:33<5:20:54,  2.21s/it]  0%|          | 14/8720 [00:35<5:16:26,  2.18s/it]                                                   {'loss': 15.5625, 'grad_norm': 86.62187957763672, 'learning_rate': 5.3435114503816794e-05, 'epoch': 0.0}
+  0%|          | 14/8720 [00:35<5:16:26,  2.18s/it]  0%|          | 15/8720 [00:38<5:31:36,  2.29s/it]                                                   {'loss': 14.5974, 'grad_norm': 45.8878173828125, 'learning_rate': 5.725190839694656e-05, 'epoch': 0.0}
+  0%|          | 15/8720 [00:38<5:31:36,  2.29s/it]  0%|          | 16/8720 [00:40<5:31:32,  2.29s/it]                                                   {'loss': 14.3549, 'grad_norm': 31.70443344116211, 'learning_rate': 6.106870229007633e-05, 'epoch': 0.0}
+  0%|          | 16/8720 [00:40<5:31:32,  2.29s/it]  0%|          | 17/8720 [00:43<5:31:29,  2.29s/it]                                                   {'loss': 14.1025, 'grad_norm': 43.515106201171875, 'learning_rate': 6.488549618320611e-05, 'epoch': 0.0}
+  0%|          | 17/8720 [00:43<5:31:29,  2.29s/it]  0%|          | 18/8720 [00:45<5:31:45,  2.29s/it]                                                   {'loss': 14.3144, 'grad_norm': 52.73761749267578, 'learning_rate': 6.870229007633588e-05, 'epoch': 0.0}
+  0%|          | 18/8720 [00:45<5:31:45,  2.29s/it]  0%|          | 19/8720 [00:47<5:27:58,  2.26s/it]                                                   {'loss': 13.8724, 'grad_norm': 33.091068267822266, 'learning_rate': 7.251908396946565e-05, 'epoch': 0.0}
+  0%|          | 19/8720 [00:47<5:27:58,  2.26s/it]  0%|          | 20/8720 [00:49<5:34:10,  2.30s/it]                                                   {'loss': 13.5869, 'grad_norm': 34.87705993652344, 'learning_rate': 7.633587786259542e-05, 'epoch': 0.0}
+  0%|          | 20/8720 [00:49<5:34:10,  2.30s/it]  0%|          | 21/8720 [00:52<5:23:30,  2.23s/it]                                                   {'loss': 13.1475, 'grad_norm': 23.39293670654297, 'learning_rate': 8.015267175572518e-05, 'epoch': 0.0}
+  0%|          | 21/8720 [00:52<5:23:30,  2.23s/it]  0%|          | 22/8720 [00:54<5:20:36,  2.21s/it]                                                   {'loss': 13.1271, 'grad_norm': 26.283266067504883, 'learning_rate': 8.396946564885496e-05, 'epoch': 0.0}
+  0%|          | 22/8720 [00:54<5:20:36,  2.21s/it]  0%|          | 23/8720 [00:56<5:19:09,  2.20s/it]                                                   {'loss': 13.0172, 'grad_norm': 36.507102966308594, 'learning_rate': 8.778625954198472e-05, 'epoch': 0.0}
+  0%|          | 23/8720 [00:56<5:19:09,  2.20s/it]  0%|          | 24/8720 [00:58<5:12:42,  2.16s/it]                                                   {'loss': 12.5333, 'grad_norm': 18.278339385986328, 'learning_rate': 9.160305343511451e-05, 'epoch': 0.0}
+  0%|          | 24/8720 [00:58<5:12:42,  2.16s/it]  0%|          | 25/8720 [01:00<5:13:40,  2.16s/it]                                                   {'loss': 12.9202, 'grad_norm': 24.05196762084961, 'learning_rate': 9.541984732824429e-05, 'epoch': 0.0}
+  0%|          | 25/8720 [01:00<5:13:40,  2.16s/it]  0%|          | 26/8720 [01:02<5:10:42,  2.14s/it]                                                   {'loss': 12.8181, 'grad_norm': 28.33041763305664, 'learning_rate': 9.923664122137405e-05, 'epoch': 0.0}
+  0%|          | 26/8720 [01:02<5:10:42,  2.14s/it]  0%|          | 27/8720 [01:04<5:14:55,  2.17s/it]                                                   {'loss': 12.4312, 'grad_norm': 23.893661499023438, 'learning_rate': 0.00010305343511450383, 'epoch': 0.0}
+  0%|          | 27/8720 [01:04<5:14:55,  2.17s/it]  0%|          | 28/8720 [01:07<5:11:49,  2.15s/it]                                                   {'loss': 12.721, 'grad_norm': 30.504207611083984, 'learning_rate': 0.00010687022900763359, 'epoch': 0.0}
+  0%|          | 28/8720 [01:07<5:11:49,  2.15s/it]  0%|          | 29/8720 [01:09<5:07:58,  2.13s/it]                                                   {'loss': 12.0852, 'grad_norm': 23.985158920288086, 'learning_rate': 0.00011068702290076336, 'epoch': 0.0}
+  0%|          | 29/8720 [01:09<5:07:58,  2.13s/it]  0%|          | 30/8720 [01:11<5:20:54,  2.22s/it]                                                   {'loss': 12.2006, 'grad_norm': 51.610679626464844, 'learning_rate': 0.00011450381679389313, 'epoch': 0.0}
+  0%|          | 30/8720 [01:11<5:20:54,  2.22s/it]  0%|          | 31/8720 [01:13<5:16:03,  2.18s/it]                                                   {'loss': 11.8637, 'grad_norm': 76.7242202758789, 'learning_rate': 0.0001183206106870229, 'epoch': 0.0}
+  0%|          | 31/8720 [01:13<5:16:03,  2.18s/it]  0%|          | 32/8720 [01:15<5:15:45,  2.18s/it]                                                   {'loss': 11.8601, 'grad_norm': 16.510536193847656, 'learning_rate': 0.00012213740458015266, 'epoch': 0.0}
+  0%|          | 32/8720 [01:15<5:15:45,  2.18s/it]  0%|          | 33/8720 [01:17<5:09:57,  2.14s/it]                                                   {'loss': 12.1684, 'grad_norm': 27.18828010559082, 'learning_rate': 0.00012595419847328244, 'epoch': 0.0}
+  0%|          | 33/8720 [01:17<5:09:57,  2.14s/it]  0%|          | 34/8720 [01:19<5:05:59,  2.11s/it]                                                   {'loss': 12.1013, 'grad_norm': 37.57609939575195, 'learning_rate': 0.00012977099236641222, 'epoch': 0.0}
+  0%|          | 34/8720 [01:19<5:05:59,  2.11s/it]  0%|          | 35/8720 [01:21<5:03:39,  2.10s/it]                                                   {'loss': 11.8734, 'grad_norm': 29.905866622924805, 'learning_rate': 0.000133587786259542, 'epoch': 0.0}
+  0%|          | 35/8720 [01:21<5:03:39,  2.10s/it]  0%|          | 36/8720 [01:24<5:02:55,  2.09s/it]                                                   {'loss': 11.4732, 'grad_norm': 11.005769729614258, 'learning_rate': 0.00013740458015267177, 'epoch': 0.0}
+  0%|          | 36/8720 [01:24<5:02:55,  2.09s/it]  0%|          | 37/8720 [01:26<5:02:15,  2.09s/it]                                                   {'loss': 11.2425, 'grad_norm': 12.207507133483887, 'learning_rate': 0.00014122137404580154, 'epoch': 0.0}
+  0%|          | 37/8720 [01:26<5:02:15,  2.09s/it]  0%|          | 38/8720 [01:28<5:07:36,  2.13s/it]                                                   {'loss': 11.3128, 'grad_norm': 71.27238464355469, 'learning_rate': 0.0001450381679389313, 'epoch': 0.0}
+  0%|          | 38/8720 [01:28<5:07:36,  2.13s/it]  0%|          | 39/8720 [01:30<5:07:09,  2.12s/it]                                                   {'loss': 11.101, 'grad_norm': 24.635560989379883, 'learning_rate': 0.00014885496183206107, 'epoch': 0.0}
+  0%|          | 39/8720 [01:30<5:07:09,  2.12s/it]  0%|          | 40/8720 [01:32<5:09:35,  2.14s/it]                                                   {'loss': 10.8241, 'grad_norm': 11.72392463684082, 'learning_rate': 0.00015267175572519084, 'epoch': 0.0}
+  0%|          | 40/8720 [01:32<5:09:35,  2.14s/it]  0%|          | 41/8720 [01:34<5:05:53,  2.11s/it]                                                   {'loss': 11.1176, 'grad_norm': 62.327476501464844, 'learning_rate': 0.00015648854961832062, 'epoch': 0.0}
+  0%|          | 41/8720 [01:34<5:05:53,  2.11s/it]  0%|          | 42/8720 [01:36<5:04:18,  2.10s/it]                                                   {'loss': 11.2929, 'grad_norm': 14.988574028015137, 'learning_rate': 0.00016030534351145037, 'epoch': 0.0}
+  0%|          | 42/8720 [01:36<5:04:18,  2.10s/it]  0%|          | 43/8720 [01:38<5:01:20,  2.08s/it]                                                   {'loss': 11.3919, 'grad_norm': 221.87318420410156, 'learning_rate': 0.00016412213740458014, 'epoch': 0.0}
+  0%|          | 43/8720 [01:38<5:01:20,  2.08s/it]  1%|          | 44/8720 [01:40<5:03:39,  2.10s/it]                                                   {'loss': 10.4757, 'grad_norm': 20.777019500732422, 'learning_rate': 0.00016793893129770992, 'epoch': 0.01}
+  1%|          | 44/8720 [01:40<5:03:39,  2.10s/it]  1%|          | 45/8720 [01:43<5:10:28,  2.15s/it]                                                   {'loss': 10.8378, 'grad_norm': 14.53829288482666, 'learning_rate': 0.0001717557251908397, 'epoch': 0.01}
+  1%|          | 45/8720 [01:43<5:10:28,  2.15s/it]  1%|          | 46/8720 [01:45<5:14:16,  2.17s/it]                                                   {'loss': 11.0037, 'grad_norm': 13.438774108886719, 'learning_rate': 0.00017557251908396944, 'epoch': 0.01}
+  1%|          | 46/8720 [01:45<5:14:16,  2.17s/it]  1%|          | 47/8720 [01:47<5:15:06,  2.18s/it]                                                   {'loss': 10.3868, 'grad_norm': 15.065694808959961, 'learning_rate': 0.00017938931297709925, 'epoch': 0.01}
+  1%|          | 47/8720 [01:47<5:15:06,  2.18s/it]  1%|          | 48/8720 [01:49<5:17:09,  2.19s/it]                                                   {'loss': 10.6739, 'grad_norm': 13.371114730834961, 'learning_rate': 0.00018320610687022902, 'epoch': 0.01}
+  1%|          | 48/8720 [01:49<5:17:09,  2.19s/it]  1%|          | 49/8720 [01:52<5:29:42,  2.28s/it]                                                   {'loss': 10.8096, 'grad_norm': 11.212848663330078, 'learning_rate': 0.0001870229007633588, 'epoch': 0.01}
+  1%|          | 49/8720 [01:52<5:29:42,  2.28s/it]  1%|          | 50/8720 [01:54<5:40:33,  2.36s/it]                                                   {'loss': 10.4254, 'grad_norm': 10.445374488830566, 'learning_rate': 0.00019083969465648857, 'epoch': 0.01}
+  1%|          | 50/8720 [01:54<5:40:33,  2.36s/it]  1%|          | 51/8720 [01:57<5:31:00,  2.29s/it]                                                   {'loss': 10.4884, 'grad_norm': 17.370094299316406, 'learning_rate': 0.00019465648854961832, 'epoch': 0.01}
+  1%|          | 51/8720 [01:57<5:31:00,  2.29s/it]  1%|          | 52/8720 [01:59<5:21:26,  2.23s/it]                                                   {'loss': 10.5923, 'grad_norm': 11.9404296875, 'learning_rate': 0.0001984732824427481, 'epoch': 0.01}
+  1%|          | 52/8720 [01:59<5:21:26,  2.23s/it]  1%|          | 53/8720 [02:01<5:13:49,  2.17s/it]                                                   {'loss': 10.5322, 'grad_norm': 10.125035285949707, 'learning_rate': 0.00020229007633587788, 'epoch': 0.01}
+  1%|          | 53/8720 [02:01<5:13:49,  2.17s/it]  1%|          | 54/8720 [02:03<5:11:19,  2.16s/it]                                                   {'loss': 10.616, 'grad_norm': 23.920928955078125, 'learning_rate': 0.00020610687022900765, 'epoch': 0.01}
+  1%|          | 54/8720 [02:03<5:11:19,  2.16s/it]  1%|          | 55/8720 [02:05<5:07:32,  2.13s/it]                                                   {'loss': 10.2108, 'grad_norm': 8.547601699829102, 'learning_rate': 0.0002099236641221374, 'epoch': 0.01}
+  1%|          | 55/8720 [02:05<5:07:32,  2.13s/it]  1%|          | 56/8720 [02:07<5:08:18,  2.14s/it]                                                   {'loss': 10.7694, 'grad_norm': 9.6254301071167, 'learning_rate': 0.00021374045801526718, 'epoch': 0.01}
+  1%|          | 56/8720 [02:07<5:08:18,  2.14s/it]  1%|          | 57/8720 [02:09<5:17:39,  2.20s/it]                                                   {'loss': 10.3116, 'grad_norm': 7.45936393737793, 'learning_rate': 0.00021755725190839695, 'epoch': 0.01}
+  1%|          | 57/8720 [02:09<5:17:39,  2.20s/it]  1%|          | 58/8720 [02:12<5:20:24,  2.22s/it]                                                   {'loss': 10.2802, 'grad_norm': 6.823535442352295, 'learning_rate': 0.00022137404580152673, 'epoch': 0.01}
+  1%|          | 58/8720 [02:12<5:20:24,  2.22s/it]  1%|          | 59/8720 [02:14<5:20:08,  2.22s/it]                                                   {'loss': 10.0892, 'grad_norm': 10.606183052062988, 'learning_rate': 0.00022519083969465648, 'epoch': 0.01}
+  1%|          | 59/8720 [02:14<5:20:08,  2.22s/it]  1%|          | 60/8720 [02:16<5:14:24,  2.18s/it]                                                   {'loss': 10.32, 'grad_norm': 6.241984844207764, 'learning_rate': 0.00022900763358778625, 'epoch': 0.01}
+  1%|          | 60/8720 [02:16<5:14:24,  2.18s/it]  1%|          | 61/8720 [02:18<5:23:38,  2.24s/it]                                                   {'loss': 10.202, 'grad_norm': 15.978482246398926, 'learning_rate': 0.00023282442748091603, 'epoch': 0.01}
+  1%|          | 61/8720 [02:18<5:23:38,  2.24s/it]  1%|          | 62/8720 [02:20<5:21:47,  2.23s/it]                                                   {'loss': 10.1349, 'grad_norm': 28.558448791503906, 'learning_rate': 0.0002366412213740458, 'epoch': 0.01}
+  1%|          | 62/8720 [02:20<5:21:47,  2.23s/it]  1%|          | 63/8720 [02:23<5:18:47,  2.21s/it]                                                   {'loss': 10.2531, 'grad_norm': 36.757652282714844, 'learning_rate': 0.00024045801526717558, 'epoch': 0.01}
+  1%|          | 63/8720 [02:23<5:18:47,  2.21s/it]  1%|          | 64/8720 [02:25<5:16:16,  2.19s/it]                                                   {'loss': 9.9727, 'grad_norm': 13.3089017868042, 'learning_rate': 0.00024427480916030533, 'epoch': 0.01}
+  1%|          | 64/8720 [02:25<5:16:16,  2.19s/it]  1%|          | 65/8720 [02:27<5:19:42,  2.22s/it]                                                   {'loss': 10.1726, 'grad_norm': 9.670929908752441, 'learning_rate': 0.00024809160305343513, 'epoch': 0.01}
+  1%|          | 65/8720 [02:27<5:19:42,  2.22s/it]  1%|          | 66/8720 [02:29<5:17:49,  2.20s/it]                                                   {'loss': 10.4313, 'grad_norm': 19.70988655090332, 'learning_rate': 0.0002519083969465649, 'epoch': 0.01}
+  1%|          | 66/8720 [02:29<5:17:49,  2.20s/it]  1%|          | 67/8720 [02:31<5:13:45,  2.18s/it]                                                   {'loss': 10.6792, 'grad_norm': 18.68665313720703, 'learning_rate': 0.00025572519083969463, 'epoch': 0.01}
+  1%|          | 67/8720 [02:31<5:13:45,  2.18s/it]  1%|          | 68/8720 [02:33<5:08:28,  2.14s/it]                                                   {'loss': 10.1843, 'grad_norm': 12.845842361450195, 'learning_rate': 0.00025954198473282443, 'epoch': 0.01}
+  1%|          | 68/8720 [02:33<5:08:28,  2.14s/it]  1%|          | 69/8720 [02:35<5:05:00,  2.12s/it]                                                   {'loss': 9.5444, 'grad_norm': 6.61850118637085, 'learning_rate': 0.0002633587786259542, 'epoch': 0.01}
+  1%|          | 69/8720 [02:35<5:05:00,  2.12s/it]  1%|          | 70/8720 [02:38<5:03:54,  2.11s/it]                                                   {'loss': 10.4893, 'grad_norm': 14.718374252319336, 'learning_rate': 0.000267175572519084, 'epoch': 0.01}
+  1%|          | 70/8720 [02:38<5:03:54,  2.11s/it]  1%|          | 71/8720 [02:40<5:01:33,  2.09s/it]                                                   {'loss': 10.0212, 'grad_norm': 8.077360153198242, 'learning_rate': 0.00027099236641221373, 'epoch': 0.01}
+  1%|          | 71/8720 [02:40<5:01:33,  2.09s/it]  1%|          | 72/8720 [02:42<5:03:18,  2.10s/it]                                                   {'loss': 9.5255, 'grad_norm': 6.141215801239014, 'learning_rate': 0.00027480916030534353, 'epoch': 0.01}
+  1%|          | 72/8720 [02:42<5:03:18,  2.10s/it]  1%|          | 73/8720 [02:44<5:01:08,  2.09s/it]                                                   {'loss': 10.015, 'grad_norm': 10.121389389038086, 'learning_rate': 0.0002786259541984733, 'epoch': 0.01}
+  1%|          | 73/8720 [02:44<5:01:08,  2.09s/it]  1%|          | 74/8720 [02:46<4:58:14,  2.07s/it]                                                   {'loss': 9.6329, 'grad_norm': 5.596858501434326, 'learning_rate': 0.0002824427480916031, 'epoch': 0.01}
+  1%|          | 74/8720 [02:46<4:58:14,  2.07s/it]  1%|          | 75/8720 [02:48<4:57:23,  2.06s/it]                                                   {'loss': 9.9413, 'grad_norm': 8.682709693908691, 'learning_rate': 0.0002862595419847328, 'epoch': 0.01}
+  1%|          | 75/8720 [02:48<4:57:23,  2.06s/it]  1%|          | 76/8720 [02:50<4:56:37,  2.06s/it]                                                   {'loss': 9.8423, 'grad_norm': 5.877224922180176, 'learning_rate': 0.0002900763358778626, 'epoch': 0.01}
+  1%|          | 76/8720 [02:50<4:56:37,  2.06s/it]  1%|          | 77/8720 [02:52<4:54:32,  2.04s/it]                                                   {'loss': 10.0039, 'grad_norm': 7.185042381286621, 'learning_rate': 0.0002938931297709924, 'epoch': 0.01}
+  1%|          | 77/8720 [02:52<4:54:32,  2.04s/it]  1%|          | 78/8720 [02:54<4:58:12,  2.07s/it]                                                   {'loss': 10.4865, 'grad_norm': 13.12275505065918, 'learning_rate': 0.00029770992366412214, 'epoch': 0.01}
+  1%|          | 78/8720 [02:54<4:58:12,  2.07s/it]  1%|          | 79/8720 [02:56<4:59:02,  2.08s/it]                                                   {'loss': 9.5507, 'grad_norm': 8.271472930908203, 'learning_rate': 0.00030152671755725194, 'epoch': 0.01}
+  1%|          | 79/8720 [02:56<4:59:02,  2.08s/it]  1%|          | 80/8720 [02:58<4:59:30,  2.08s/it]                                                   {'loss': 9.5669, 'grad_norm': 5.388352870941162, 'learning_rate': 0.0003053435114503817, 'epoch': 0.01}
+  1%|          | 80/8720 [02:58<4:59:30,  2.08s/it]  1%|          | 81/8720 [03:00<4:58:47,  2.08s/it]                                                   {'loss': 9.7069, 'grad_norm': 5.218339443206787, 'learning_rate': 0.0003091603053435115, 'epoch': 0.01}
+  1%|          | 81/8720 [03:00<4:58:47,  2.08s/it]  1%|          | 82/8720 [03:02<5:00:34,  2.09s/it]                                                   {'loss': 9.5181, 'grad_norm': 5.596482753753662, 'learning_rate': 0.00031297709923664124, 'epoch': 0.01}
+  1%|          | 82/8720 [03:02<5:00:34,  2.09s/it]  1%|          | 83/8720 [03:05<5:00:03,  2.08s/it]                                                   {'loss': 9.7796, 'grad_norm': 5.55801248550415, 'learning_rate': 0.000316793893129771, 'epoch': 0.01}
+  1%|          | 83/8720 [03:05<5:00:03,  2.08s/it]  1%|          | 84/8720 [03:07<4:58:46,  2.08s/it]                                                   {'loss': 9.2299, 'grad_norm': 5.225762844085693, 'learning_rate': 0.00032061068702290074, 'epoch': 0.01}
+  1%|          | 84/8720 [03:07<4:58:46,  2.08s/it]  1%|          | 85/8720 [03:09<5:02:21,  2.10s/it]                                                   {'loss': 9.476, 'grad_norm': 5.253740310668945, 'learning_rate': 0.00032442748091603054, 'epoch': 0.01}
+  1%|          | 85/8720 [03:09<5:02:21,  2.10s/it]  1%|          | 86/8720 [03:11<5:12:55,  2.17s/it]                                                   {'loss': 9.6926, 'grad_norm': 5.48244047164917, 'learning_rate': 0.0003282442748091603, 'epoch': 0.01}
+  1%|          | 86/8720 [03:11<5:12:55,  2.17s/it]  1%|          | 87/8720 [03:13<5:11:33,  2.17s/it]                                                   {'loss': 9.5813, 'grad_norm': 4.733418941497803, 'learning_rate': 0.0003320610687022901, 'epoch': 0.01}
+  1%|          | 87/8720 [03:13<5:11:33,  2.17s/it]  1%|          | 88/8720 [03:15<5:06:57,  2.13s/it]                                                   {'loss': 9.1856, 'grad_norm': 4.281282901763916, 'learning_rate': 0.00033587786259541984, 'epoch': 0.01}
+  1%|          | 88/8720 [03:15<5:06:57,  2.13s/it]  1%|          | 89/8720 [03:17<5:04:25,  2.12s/it]                                                   {'loss': 9.7835, 'grad_norm': 4.4438557624816895, 'learning_rate': 0.00033969465648854964, 'epoch': 0.01}
+  1%|          | 89/8720 [03:17<5:04:25,  2.12s/it]  1%|          | 90/8720 [03:19<5:04:10,  2.11s/it]                                                   {'loss': 9.7627, 'grad_norm': 4.240885257720947, 'learning_rate': 0.0003435114503816794, 'epoch': 0.01}
+  1%|          | 90/8720 [03:19<5:04:10,  2.11s/it]  1%|          | 91/8720 [03:22<5:01:41,  2.10s/it]                                                   {'loss': 9.8722, 'grad_norm': 4.848288059234619, 'learning_rate': 0.0003473282442748092, 'epoch': 0.01}
+  1%|          | 91/8720 [03:22<5:01:41,  2.10s/it]  1%|          | 92/8720 [03:24<5:03:10,  2.11s/it]                                                   {'loss': 9.6153, 'grad_norm': 5.472549915313721, 'learning_rate': 0.0003511450381679389, 'epoch': 0.01}
+  1%|          | 92/8720 [03:24<5:03:10,  2.11s/it]  1%|          | 93/8720 [03:26<5:02:26,  2.10s/it]                                                   {'loss': 9.2883, 'grad_norm': 4.254133224487305, 'learning_rate': 0.0003549618320610687, 'epoch': 0.01}
+  1%|          | 93/8720 [03:26<5:02:26,  2.10s/it]  1%|          | 94/8720 [03:28<5:03:32,  2.11s/it]                                                   {'loss': 9.6993, 'grad_norm': 4.414114475250244, 'learning_rate': 0.0003587786259541985, 'epoch': 0.01}
+  1%|          | 94/8720 [03:28<5:03:32,  2.11s/it]  1%|          | 95/8720 [03:30<5:03:17,  2.11s/it]                                                   {'loss': 9.2672, 'grad_norm': 4.595561981201172, 'learning_rate': 0.00036259541984732824, 'epoch': 0.01}
+  1%|          | 95/8720 [03:30<5:03:17,  2.11s/it]  1%|          | 96/8720 [03:32<5:02:18,  2.10s/it]                                                   {'loss': 9.9627, 'grad_norm': 4.899599075317383, 'learning_rate': 0.00036641221374045805, 'epoch': 0.01}
+  1%|          | 96/8720 [03:32<5:02:18,  2.10s/it]  1%|          | 97/8720 [03:34<5:02:04,  2.10s/it]                                                   {'loss': 9.527, 'grad_norm': 5.879511833190918, 'learning_rate': 0.0003702290076335878, 'epoch': 0.01}
+  1%|          | 97/8720 [03:34<5:02:04,  2.10s/it]  1%|          | 98/8720 [03:36<5:00:03,  2.09s/it]                                                   {'loss': 9.3304, 'grad_norm': 4.146018028259277, 'learning_rate': 0.0003740458015267176, 'epoch': 0.01}
+  1%|          | 98/8720 [03:36<5:00:03,  2.09s/it]  1%|          | 99/8720 [03:38<4:58:54,  2.08s/it]                                                   {'loss': 9.1529, 'grad_norm': 3.4339351654052734, 'learning_rate': 0.00037786259541984735, 'epoch': 0.01}
+  1%|          | 99/8720 [03:38<4:58:54,  2.08s/it]  1%|          | 100/8720 [03:40<5:03:33,  2.11s/it]                                                    {'loss': 9.3887, 'grad_norm': 4.027610778808594, 'learning_rate': 0.00038167938931297715, 'epoch': 0.01}
+  1%|          | 100/8720 [03:40<5:03:33,  2.11s/it]  1%|          | 101/8720 [03:43<5:00:45,  2.09s/it]                                                    {'loss': 9.1628, 'grad_norm': 5.440970420837402, 'learning_rate': 0.00038549618320610684, 'epoch': 0.01}
+  1%|          | 101/8720 [03:43<5:00:45,  2.09s/it]  1%|          | 102/8720 [03:45<5:12:55,  2.18s/it]                                                    {'loss': 9.3363, 'grad_norm': 3.794602632522583, 'learning_rate': 0.00038931297709923665, 'epoch': 0.01}
+  1%|          | 102/8720 [03:45<5:12:55,  2.18s/it]  1%|          | 103/8720 [03:47<5:07:43,  2.14s/it]                                                    {'loss': 9.3856, 'grad_norm': 3.3679609298706055, 'learning_rate': 0.0003931297709923664, 'epoch': 0.01}
+  1%|          | 103/8720 [03:47<5:07:43,  2.14s/it]  1%|          | 104/8720 [03:49<5:03:37,  2.11s/it]                                                    {'loss': 9.0498, 'grad_norm': 4.441159725189209, 'learning_rate': 0.0003969465648854962, 'epoch': 0.01}
+  1%|          | 104/8720 [03:49<5:03:37,  2.11s/it]  1%|          | 105/8720 [03:51<5:00:33,  2.09s/it]                                                    {'loss': 9.5244, 'grad_norm': 3.9730749130249023, 'learning_rate': 0.00040076335877862595, 'epoch': 0.01}
+  1%|          | 105/8720 [03:51<5:00:33,  2.09s/it]  1%|          | 106/8720 [03:53<4:59:22,  2.09s/it]                                                    {'loss': 9.4824, 'grad_norm': 3.76070237159729, 'learning_rate': 0.00040458015267175575, 'epoch': 0.01}
+  1%|          | 106/8720 [03:53<4:59:22,  2.09s/it]  1%|          | 107/8720 [03:55<4:59:50,  2.09s/it]                                                    {'loss': 9.6298, 'grad_norm': 4.266857624053955, 'learning_rate': 0.0004083969465648855, 'epoch': 0.01}
+  1%|          | 107/8720 [03:55<4:59:50,  2.09s/it]  1%|          | 108/8720 [03:57<4:58:28,  2.08s/it]                                                    {'loss': 9.4549, 'grad_norm': 3.849266529083252, 'learning_rate': 0.0004122137404580153, 'epoch': 0.01}
+  1%|          | 108/8720 [03:57<4:58:28,  2.08s/it]  1%|▏         | 109/8720 [03:59<5:00:50,  2.10s/it]                                                    {'loss': 9.1798, 'grad_norm': 4.254724502563477, 'learning_rate': 0.00041603053435114505, 'epoch': 0.01}
+  1%|▏         | 109/8720 [03:59<5:00:50,  2.10s/it]  1%|▏         | 110/8720 [04:51<40:45:38, 17.04s/it]                                                     {'loss': 9.3902, 'grad_norm': 4.227137088775635, 'learning_rate': 0.0004198473282442748, 'epoch': 0.01}
+  1%|▏         | 110/8720 [04:52<40:45:38, 17.04s/it][2026-01-26 00:12:15,482] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1777773
+[2026-01-26 00:12:16,201] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1777774
+[2026-01-26 00:12:16,812] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1777775
+[2026-01-26 00:12:16,812] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1777776
+[2026-01-26 00:12:17,452] [ERROR] [launch.py:325:sigkill_handler] ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_qwen2.py', '--local_rank=3', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/blip_laion_cc_sbu_558k.json', '--image_folder', '/home/jsun/llava-kd/dataset/llava/llava_pretrain/images', '--is_multimodal', 'True', '--conv_version', 'pretrain', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'frozen', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--output_dir', './checkpoints/qwen25-0_5b-pretrain', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '5', '--load_best_model_at_end', 'False', '--learning_rate', '1e-3', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-pretrain'] exits with return code = -9
+==========================================
+Starting SFT Student Only Training
+==========================================
+Data path: /home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json
+Image path: /home/jsun/llava-kd/dataset/finetune_data
+Pretrain checkpoint: ./checkpoints/qwen25-0_5b-pretrain
+Output: ./checkpoints/qwen25-0_5b-sft-sft
+==========================================
+==========================================
+SFT Student Only Training
+==========================================
+Pretrain checkpoint: ./checkpoints/qwen25-0_5b-pretrain
+Output directory: ./checkpoints/qwen25-0_5b-sft
+Log file: ./checkpoints/qwen25-0_5b-sft/train_20260126_001219.log
+==========================================
+[2026-01-26 00:12:22,420] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[2026-01-26 00:12:24,466] [WARNING] [runner.py:202:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2026-01-26 00:12:24,466] [INFO] [runner.py:568:main] cmd = /home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMSwgMiwgM119 --master_addr=127.0.0.1 --master_port=29989 --enable_each_rank_log=None llavakd/train/train_sft_student_only.py --deepspeed scripts/zero2.json --data_path /home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json --image_folder /home/jsun/llava-kd/dataset/finetune_data --is_multimodal True --conv_version qwen2_base --model_name_or_path Qwen/Qwen2.5-0.5B --vision_tower google/siglip-so400m-patch14-384 --vision_tower2  --connector_type mlp2x_gelu --mm_vision_select_layer -2 --image_aspect_ratio square --attn_implementation flash_attention_2 --bf16 True --training_recipe common --tune_type_llm full --tune_type_vision_tower frozen --tune_vision_tower_from_layer 0 --tune_type_connector full --group_by_modality_length True --pretrained_model_path ./checkpoints/qwen25-0_5b-pretrain --output_dir ./checkpoints/qwen25-0_5b-sft --num_train_epochs 1 --per_device_train_batch_size 1 --per_device_eval_batch_size 4 --gradient_accumulation_steps 16 --evaluation_strategy no --save_strategy steps --save_steps 2000 --save_total_limit 6 --learning_rate 2e-5 --weight_decay 0. --warmup_ratio 0.03 --lr_scheduler_type cosine --logging_steps 1 --tf32 True --model_max_length 2048 --gradient_checkpointing True --dataloader_num_workers 8 --dataloader_pin_memory True --lazy_preprocess True --report_to tensorboard --tokenizer_use_fast False --run_name qwen25-0_5b-sft
+[2026-01-26 00:12:25,834] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+[2026-01-26 00:12:27,185] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1, 2, 3]}
+[2026-01-26 00:12:27,185] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=4, node_rank=0
+[2026-01-26 00:12:27,185] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1, 2, 3]})
+[2026-01-26 00:12:27,185] [INFO] [launch.py:164:main] dist_world_size=4
+[2026-01-26 00:12:27,185] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1,2,3
+[2026-01-26 00:12:27,185] [INFO] [launch.py:256:main] process 1781698 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_sft_student_only.py', '--local_rank=0', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-pretrain', '--output_dir', './checkpoints/qwen25-0_5b-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-sft']
+[2026-01-26 00:12:27,186] [INFO] [launch.py:256:main] process 1781699 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_sft_student_only.py', '--local_rank=1', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-pretrain', '--output_dir', './checkpoints/qwen25-0_5b-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-sft']
+[2026-01-26 00:12:27,186] [INFO] [launch.py:256:main] process 1781700 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_sft_student_only.py', '--local_rank=2', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-pretrain', '--output_dir', './checkpoints/qwen25-0_5b-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-sft']
+[2026-01-26 00:12:27,186] [INFO] [launch.py:256:main] process 1781701 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_sft_student_only.py', '--local_rank=3', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-pretrain', '--output_dir', './checkpoints/qwen25-0_5b-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-sft']
+[2026-01-26 00:12:33,445] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[2026-01-26 00:12:33,537] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-01-26 00:12:33,541] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[2026-01-26 00:12:33,560] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+[2026-01-26 00:12:34,834] [INFO] [comm.py:637:init_distributed] cdb=None
+[2026-01-26 00:12:34,834] [INFO] [comm.py:637:init_distributed] cdb=None
+[2026-01-26 00:12:34,835] [INFO] [comm.py:637:init_distributed] cdb=None
+[2026-01-26 00:12:34,842] [INFO] [comm.py:637:init_distributed] cdb=None
+[2026-01-26 00:12:34,842] [INFO] [comm.py:668:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Student vision tower loaded successfully
+Loading student LLM from HuggingFace: Qwen/Qwen2.5-0.5B
+Student vision tower loaded successfullyStudent vision tower loaded successfully
+
+Loading student LLM from HuggingFace: Qwen/Qwen2.5-0.5B
+Loading student LLM from HuggingFace: Qwen/Qwen2.5-0.5B
+Student vision tower loaded successfully
+Loading student LLM from HuggingFace: Qwen/Qwen2.5-0.5B
+Student LLM loaded successfully
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/jsun/llava-kd/llavakd/train/train_sft_student_only.py", line 182, in <module>
+[rank0]:     train()
+[rank0]:   File "/home/jsun/llava-kd/llavakd/train/train_sft_student_only.py", line 111, in train
+[rank0]:     raise FileNotFoundError(f"Connector checkpoint not found: {connector_ckp_path}")
+[rank0]: FileNotFoundError: Connector checkpoint not found: ./checkpoints/qwen25-0_5b-pretrain/connector/pytorch_model.bin
+Student LLM loaded successfully
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/jsun/llava-kd/llavakd/train/train_sft_student_only.py", line 182, in <module>
+[rank3]:     train()
+[rank3]:   File "/home/jsun/llava-kd/llavakd/train/train_sft_student_only.py", line 111, in train
+[rank3]:     raise FileNotFoundError(f"Connector checkpoint not found: {connector_ckp_path}")
+[rank3]: FileNotFoundError: Connector checkpoint not found: ./checkpoints/qwen25-0_5b-pretrain/connector/pytorch_model.bin
+Student LLM loaded successfully
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/jsun/llava-kd/llavakd/train/train_sft_student_only.py", line 182, in <module>
+[rank1]:     train()
+[rank1]:   File "/home/jsun/llava-kd/llavakd/train/train_sft_student_only.py", line 111, in train
+[rank1]:     raise FileNotFoundError(f"Connector checkpoint not found: {connector_ckp_path}")
+[rank1]: FileNotFoundError: Connector checkpoint not found: ./checkpoints/qwen25-0_5b-pretrain/connector/pytorch_model.bin
+Student LLM loaded successfully
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/jsun/llava-kd/llavakd/train/train_sft_student_only.py", line 182, in <module>
+[rank2]:     train()
+[rank2]:   File "/home/jsun/llava-kd/llavakd/train/train_sft_student_only.py", line 111, in train
+[rank2]:     raise FileNotFoundError(f"Connector checkpoint not found: {connector_ckp_path}")
+[rank2]: FileNotFoundError: Connector checkpoint not found: ./checkpoints/qwen25-0_5b-pretrain/connector/pytorch_model.bin
+[rank0]:[W126 00:12:53.762722779 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[2026-01-26 00:12:55,194] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1781698
+[2026-01-26 00:12:55,208] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1781699
+[2026-01-26 00:12:55,208] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1781700
+[2026-01-26 00:12:55,219] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1781701
+[2026-01-26 00:12:55,230] [ERROR] [launch.py:325:sigkill_handler] ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_sft_student_only.py', '--local_rank=3', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-pretrain', '--output_dir', './checkpoints/qwen25-0_5b-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-sft'] exits with return code = 1
+==========================================
+Starting Distill After SFT Training
+==========================================
+Data path: /home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json
+Image path: /home/jsun/llava-kd/dataset/finetune_data
+SFT checkpoint: ./checkpoints/qwen25-0_5b-sft
+Output: ./checkpoints/qwen25-0_5b-distill-after-sft
+==========================================
+==========================================
+Distill After SFT Training
+==========================================
+SFT checkpoint: ./checkpoints/qwen25-0_5b-sft
+Output directory: ./checkpoints/qwen25-0_5b-distill-after-sft
+Log file: ./checkpoints/qwen25-0_5b-distill-after-sft/train_20260126_001256.log
+==========================================
+[2026-01-26 00:12:58,501] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[2026-01-26 00:12:59,979] [WARNING] [runner.py:202:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2026-01-26 00:12:59,979] [INFO] [runner.py:568:main] cmd = /home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12 -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMSwgMiwgM119 --master_addr=127.0.0.1 --master_port=29515 --enable_each_rank_log=None llavakd/train/train_distill_after_qwen2_sft.py --deepspeed scripts/zero2.json --data_path /home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json --image_folder /home/jsun/llava-kd/dataset/finetune_data --is_multimodal True --conv_version qwen2_base --model_name_or_path Qwen/Qwen2.5-0.5B --vision_tower google/siglip-so400m-patch14-384 --vision_tower2  --connector_type mlp2x_gelu --mm_vision_select_layer -2 --image_aspect_ratio square --attn_implementation flash_attention_2 --bf16 True --training_recipe common --tune_type_llm full --tune_type_vision_tower frozen --tune_vision_tower_from_layer 0 --tune_type_connector full --group_by_modality_length True --pretrained_model_path ./checkpoints/qwen25-0_5b-sft --output_dir ./checkpoints/qwen25-0_5b-distill-after-sft --num_train_epochs 1 --per_device_train_batch_size 1 --per_device_eval_batch_size 4 --gradient_accumulation_steps 16 --evaluation_strategy no --save_strategy steps --save_steps 2000 --save_total_limit 6 --learning_rate 2e-5 --weight_decay 0. --warmup_ratio 0.03 --lr_scheduler_type cosine --logging_steps 1 --tf32 True --model_max_length 2048 --gradient_checkpointing True --dataloader_num_workers 8 --dataloader_pin_memory True --lazy_preprocess True --report_to tensorboard --tokenizer_use_fast False --run_name qwen25-0_5b-distill-after-sft
+[2026-01-26 00:13:02,194] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+[2026-01-26 00:13:03,668] [INFO] [launch.py:146:main] WORLD INFO DICT: {'localhost': [0, 1, 2, 3]}
+[2026-01-26 00:13:03,668] [INFO] [launch.py:152:main] nnodes=1, num_local_procs=4, node_rank=0
+[2026-01-26 00:13:03,668] [INFO] [launch.py:163:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1, 2, 3]})
+[2026-01-26 00:13:03,668] [INFO] [launch.py:164:main] dist_world_size=4
+[2026-01-26 00:13:03,668] [INFO] [launch.py:168:main] Setting CUDA_VISIBLE_DEVICES=0,1,2,3
+[2026-01-26 00:13:03,669] [INFO] [launch.py:256:main] process 1782421 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_after_qwen2_sft.py', '--local_rank=0', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-sft', '--output_dir', './checkpoints/qwen25-0_5b-distill-after-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-distill-after-sft']
+[2026-01-26 00:13:03,669] [INFO] [launch.py:256:main] process 1782422 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_after_qwen2_sft.py', '--local_rank=1', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-sft', '--output_dir', './checkpoints/qwen25-0_5b-distill-after-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-distill-after-sft']
+[2026-01-26 00:13:03,669] [INFO] [launch.py:256:main] process 1782423 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_after_qwen2_sft.py', '--local_rank=2', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-sft', '--output_dir', './checkpoints/qwen25-0_5b-distill-after-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-distill-after-sft']
+[2026-01-26 00:13:03,670] [INFO] [launch.py:256:main] process 1782424 spawned with command: ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_after_qwen2_sft.py', '--local_rank=3', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-sft', '--output_dir', './checkpoints/qwen25-0_5b-distill-after-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-distill-after-sft']
+[2026-01-26 00:13:08,909] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[2026-01-26 00:13:09,005] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-01-26 00:13:09,038] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-01-26 00:13:09,038] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:47: FutureWarning: `torch.cuda.amp.custom_fwd(args...)` is deprecated. Please use `torch.amp.custom_fwd(args..., device_type='cuda')` instead.
+  @autocast_custom_fwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/deepspeed/runtime/zero/linear.py:66: FutureWarning: `torch.cuda.amp.custom_bwd(args...)` is deprecated. Please use `torch.amp.custom_bwd(args..., device_type='cuda')` instead.
+  @autocast_custom_bwd
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+[2026-01-26 00:13:10,144] [INFO] [comm.py:637:init_distributed] cdb=None
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/transformers/deepspeed.py:23: FutureWarning: transformers.deepspeed module is deprecated and will be removed in a future version. Please import deepspeed modules directly from transformers.integrations
+  warnings.warn(
+[2026-01-26 00:13:10,156] [INFO] [comm.py:637:init_distributed] cdb=None
+[2026-01-26 00:13:10,164] [INFO] [comm.py:637:init_distributed] cdb=None
+[2026-01-26 00:13:10,173] [INFO] [comm.py:637:init_distributed] cdb=None
+[2026-01-26 00:13:10,173] [INFO] [comm.py:668:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+wandb: WARNING The anonymous setting has no effect and will be removed in a future version.
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+[Rank 3] Loading teacher model from HuggingFace: Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+[Rank 1] Loading teacher model from HuggingFace: Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+[Rank 2] Loading teacher model from HuggingFace: Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+wandb: Currently logged in as: jingchensun (jsun39) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.24.0
+wandb: Run data is saved locally in wandb/wandb/run-20260126_001311-a2ncdx0d
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run distill-after-sft-Qwen2.5-0.5B
+wandb: ⭐️ View project at https://wandb.ai/jsun39/DistillTinyLLaVA
+wandb: 🚀 View run at https://wandb.ai/jsun39/DistillTinyLLaVA/runs/a2ncdx0d
+[Rank 0] Loading teacher model from HuggingFace: Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP
+The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+/home/onsi/jsun/miniconda3/envs/llava-kd/lib/python3.12/site-packages/huggingface_hub/file_download.py:942: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:09<00:09,  9.14s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:09<00:09,  9.40s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:09<00:09,  9.17s/it]Loading checkpoint shards:  50%|█████     | 1/2 [00:08<00:08,  8.86s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  8.95s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  9.02s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  9.09s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  9.09s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.92s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.96s/it]
+Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.79s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.80s/it]
+[Rank 3] Teacher model loaded to cuda:3
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+[Rank 2] Teacher model loaded to cuda:2
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+[Rank 1] Teacher model loaded to cuda:1
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+[Rank 0] Teacher model loaded to cuda:0
+Loading student vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Student vision tower loaded successfully
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 236, in <module>
+[rank3]:     train()
+[rank3]:   File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 157, in train
+[rank3]:     raise FileNotFoundError(f"LLM checkpoint not found: {llm_ckp_path}")
+[rank3]: FileNotFoundError: LLM checkpoint not found: ./checkpoints/qwen25-0_5b-sft/language_model/pytorch_model.bin
+Student vision tower loaded successfully
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 236, in <module>
+[rank2]:     train()
+[rank2]:   File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 157, in train
+[rank2]:     raise FileNotFoundError(f"LLM checkpoint not found: {llm_ckp_path}")
+[rank2]: FileNotFoundError: LLM checkpoint not found: ./checkpoints/qwen25-0_5b-sft/language_model/pytorch_model.bin
+Student vision tower loaded successfully
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 236, in <module>
+[rank1]:     train()
+[rank1]:   File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 157, in train
+[rank1]:     raise FileNotFoundError(f"LLM checkpoint not found: {llm_ckp_path}")
+[rank1]: FileNotFoundError: LLM checkpoint not found: ./checkpoints/qwen25-0_5b-sft/language_model/pytorch_model.bin
+Student vision tower loaded successfully
+Traceback (most recent call last):
+  File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 236, in <module>
+    train()
+  File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 157, in train
+    raise FileNotFoundError(f"LLM checkpoint not found: {llm_ckp_path}")
+FileNotFoundError: LLM checkpoint not found: ./checkpoints/qwen25-0_5b-sft/language_model/pytorch_model.bin
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 236, in <module>
+[rank0]:     train()
+[rank0]:   File "/home/jsun/llava-kd/llavakd/train/train_distill_after_qwen2_sft.py", line 157, in train
+[rank0]:     raise FileNotFoundError(f"LLM checkpoint not found: {llm_ckp_path}")
+[rank0]: FileNotFoundError: LLM checkpoint not found: ./checkpoints/qwen25-0_5b-sft/language_model/pytorch_model.bin
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mdistill-after-sft-Qwen2.5-0.5B[0m at: [34mhttps://wandb.ai/jsun39/DistillTinyLLaVA/runs/a2ncdx0d[0m
+[rank0]:[W126 00:13:47.193466698 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[2026-01-26 00:13:47,676] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1782421
+[2026-01-26 00:13:48,008] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1782422
+[2026-01-26 00:13:48,021] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1782423
+[2026-01-26 00:13:48,032] [INFO] [launch.py:319:sigkill_handler] Killing subprocess 1782424
+[2026-01-26 00:13:48,032] [ERROR] [launch.py:325:sigkill_handler] ['/home/onsi/jsun/miniconda3/envs/llava-kd/bin/python3.12', '-u', 'llavakd/train/train_distill_after_qwen2_sft.py', '--local_rank=3', '--deepspeed', 'scripts/zero2.json', '--data_path', '/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json', '--image_folder', '/home/jsun/llava-kd/dataset/finetune_data', '--is_multimodal', 'True', '--conv_version', 'qwen2_base', '--model_name_or_path', 'Qwen/Qwen2.5-0.5B', '--vision_tower', 'google/siglip-so400m-patch14-384', '--vision_tower2', '', '--connector_type', 'mlp2x_gelu', '--mm_vision_select_layer', '-2', '--image_aspect_ratio', 'square', '--attn_implementation', 'flash_attention_2', '--bf16', 'True', '--training_recipe', 'common', '--tune_type_llm', 'full', '--tune_type_vision_tower', 'frozen', '--tune_vision_tower_from_layer', '0', '--tune_type_connector', 'full', '--group_by_modality_length', 'True', '--pretrained_model_path', './checkpoints/qwen25-0_5b-sft', '--output_dir', './checkpoints/qwen25-0_5b-distill-after-sft', '--num_train_epochs', '1', '--per_device_train_batch_size', '1', '--per_device_eval_batch_size', '4', '--gradient_accumulation_steps', '16', '--evaluation_strategy', 'no', '--save_strategy', 'steps', '--save_steps', '2000', '--save_total_limit', '6', '--learning_rate', '2e-5', '--weight_decay', '0.', '--warmup_ratio', '0.03', '--lr_scheduler_type', 'cosine', '--logging_steps', '1', '--tf32', 'True', '--model_max_length', '2048', '--gradient_checkpointing', 'True', '--dataloader_num_workers', '8', '--dataloader_pin_memory', 'True', '--lazy_preprocess', 'True', '--report_to', 'tensorboard', '--tokenizer_use_fast', 'False', '--run_name', 'qwen25-0_5b-distill-after-sft'] exits with return code = 1

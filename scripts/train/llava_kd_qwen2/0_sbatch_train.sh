@@ -6,11 +6,11 @@
 #SBATCH --error=0_pretrain.err                    # 错误日志文件
 #SBATCH --ntasks=1                             # 启动 1 个任务
 #SBATCH --cpus-per-task=16                      # 每个任务 8 个 CPU 核心
-#SBATCH --mem=64GB                            # 每个 CPU 核心分配 32GB 内存
+#SBATCH --mem=128GB                            # 每个 CPU 核心分配 32GB 内存
 #SBATCH --time=4-23:00:00                        # 运行时间（1小时）
 #SBATCH --partition=prod_long                       # 分区设置（prod 分区）
 #SBATCH --gres=shard:16 
-#SBATCH --constraint=GPUMODEL_A100-SXM4|GPUMODEL_A100-PCIE|GPUMODEL_H100-SXM5|GPUMODEL_H200-SXM5
+#SBATCH --constraint=GPUMODEL_H100-SXM5
 
 
 export WANDB_API_KEY="595cc8071abc681aa346ae6017f73fc16a9b2033"  # 替换为你的API Key
@@ -18,8 +18,8 @@ export WANDB_MODE=online  # 确保 wandb 处于在线模式
 
 source /home/onsi/jsun/miniconda3/bin/activate llava-kd        # 激活 Conda 环境
 
-bash 1_train_qwen2_distill.sh
-bash 2_train_sft_student_only.sh
-bash 3_train_qwen2_distill_after_sft.sh
+# bash 1_train_qwen2_distill.sh
+# bash 2_train_sft_student_only.sh
+# bash 3_train_qwen2_distill_after_sft.sh
 
 sleep infinity
