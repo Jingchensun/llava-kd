@@ -42,10 +42,19 @@ eval_output=$(python3.12 llavakd/eval/eval_pope.py \
 
 echo "$eval_output"
 
-# Extract and save result
-accuracy_line=$(echo "$eval_output" | grep "Accuracy:" | tail -1)
-f1_line=$(echo "$eval_output" | grep "F1 score:")
-precision_line=$(echo "$eval_output" | grep "Precision:")
-if [ -n "$accuracy_line" ]; then
-    echo "POPE: $accuracy_line, $precision_line, $f1_line" >> eval/results/${MODEL_NAME}_eval.txt
+# Extract all three accuracies and calculate average
+accuracies=$(echo "$eval_output" | grep "^Accuracy:" | awk '{print $2}')
+avg_accuracy=$(echo "$accuracies" | awk '{sum+=$1; count+=1} END {printf "%.4f", sum/count}')
+
+# Extract F1 and Precision for summary (using last one as representative)
+f1_line=$(echo "$eval_output" | grep "F1 score:" | tail -1)
+precision_line=$(echo "$eval_output" | grep "Precision:" | tail -1)
+
+echo ""
+echo "========================================"
+echo "POPE Average Accuracy: $avg_accuracy"
+echo "========================================"
+
+if [ -n "$avg_accuracy" ]; then
+    echo "POPE: Accuracy: $avg_accuracy, $precision_line, $f1_line" >> eval/results/${MODEL_NAME}_eval.txt
 fi

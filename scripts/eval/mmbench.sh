@@ -38,6 +38,9 @@ done
 mkdir -p  $EVAL_DIR/mmbench/answers_upload/$SPLIT
 mkdir -p eval/results
 
+# Create a symbolic link or copy the merge.jsonl to expected location
+cp "$output_file" "$EVAL_DIR/mmbench/answers/$SPLIT/${MODEL_NAME}.jsonl"
+
 eval_output=$(python3.12 scripts/convert_mmbench_for_submission.py \
     --annotation-file $EVAL_DIR/mmbench/$SPLIT.tsv \
     --result-dir $EVAL_DIR/mmbench/answers/$SPLIT \
@@ -49,5 +52,12 @@ echo "$eval_output"
 # Count results and save
 result_file="$EVAL_DIR/mmbench/answers_upload/$SPLIT/${MODEL_NAME}.xlsx"
 if [ -f "$result_file" ]; then
-    echo "MMBench: Results saved to ${result_file}" >> eval/results/${MODEL_NAME}_eval.txt
+    num_answers=$(python3.12 -c "import pandas as pd; df=pd.read_excel('$result_file'); print(len(df))")
+    echo ""
+    echo "=========================================="
+    echo "MMBench Evaluation Complete"
+    echo "Total answers: $num_answers"
+    echo "Results saved to: ${result_file}"
+    echo "=========================================="
+    echo "MMBench: Total answers: $num_answers | Results: ${result_file}" >> eval/results/${MODEL_NAME}_eval.txt
 fi

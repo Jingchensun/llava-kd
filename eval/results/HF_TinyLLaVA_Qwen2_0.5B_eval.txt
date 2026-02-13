@@ -1,0 +1,13 @@
+GQA: In particular please avoid using features from https://github.com/peteanderson80/bottom-up-attention since they were trained on images contained in the GQA validation set and thus may give false scores improvement.
+GQA: In particular please avoid using features from https://github.com/peteanderson80/bottom-up-attention since they were trained on images contained in the GQA validation set and thus may give false scores improvement.
+GQA: In particular please avoid using features from https://github.com/peteanderson80/bottom-up-attention since they were trained on images contained in the GQA validation set and thus may give false scores improvement.
+SQA: Total: 4241, Correct: 3333, Accuracy: 78.59%, IMG-Accuracy: 74.12%
+GQA: Accuracy: 62.52%
+POPE: Accuracy: 0.876, Precision: 0.9787581699346405
+Precision: 0.9089529590288316
+Precision: 0.944794952681388, F1 score: 0.8795888399412628
+F1 score: 0.850248403122782
+F1 score: 0.865606936416185
+POPE: Accuracy: 0.8742, Precision: 0.944794952681388, F1 score: 0.865606936416185
+MMBench: Total answers: 4329 | Results: ./eval_dataset/mmbench/answers_upload/mmbench_dev_en_20231003/HF_TinyLLaVA_Qwen2_0.5B.xlsx
+MME: Perception: 1440.4901960784314

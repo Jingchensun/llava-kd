@@ -40,7 +40,45 @@ def load_pretrained_model(model_name_or_path, load_type='hf', load_8bit=False, l
         )
     else:
         kwargs['torch_dtype'] = torch.float16
-    if model_name_or_path is not None and 'lora' not in model_name_or_path:
+    
+    # 检查是否为分散格式的模型（language_model/, connector/, vision_tower/ 子目录）
+    is_split_format = (
+        os.path.exists(os.path.join(model_name_or_path, 'language_model/pytorch_model.bin')) and
+        os.path.exists(os.path.join(model_name_or_path, 'connector/pytorch_model.bin')) and
+        os.path.exists(os.path.join(model_name_or_path, 'vision_tower/pytorch_model.bin'))
+    )
+    
+    if model_name_or_path is not None and is_split_format:
+        # 加载分散格式的模型（训练保存的格式）
+        print(f'Loading split-format model from {model_name_or_path}')
+        model_config = TinyLlavaConfig.from_pretrained(model_name_or_path)
+        model = LLaVAKD(model_config)
+        
+        # 加载 Language Model 权重
+        language_model_ckp_path = os.path.join(model_name_or_path, 'language_model/pytorch_model.bin')
+        print(f'Loading language model from {language_model_ckp_path}')
+        language_model_ckp = torch.load(language_model_ckp_path, map_location='cpu')
+        # 使用 strict=False 允许缺少某些权重（如 lm_head.weight，它会与 embed_tokens 共享）
+        model.language_model.load_state_dict(language_model_ckp, strict=False)
+        # 绑定权重（lm_head 和 embed_tokens 共享权重）
+        model.language_model.tie_weights()
+        
+        # 加载 Vision Tower 权重
+        vision_tower_ckp_path = os.path.join(model_name_or_path, 'vision_tower/pytorch_model.bin')
+        print(f'Loading vision tower from {vision_tower_ckp_path}')
+        vision_tower_ckp = torch.load(vision_tower_ckp_path, map_location='cpu')
+        model.vision_tower._vision_tower.load_state_dict(vision_tower_ckp, strict=False)
+        
+        # 加载 Connector 权重
+        connector_ckp_path = os.path.join(model_name_or_path, 'connector/pytorch_model.bin')
+        print(f'Loading connector from {connector_ckp_path}')
+        connector_ckp = torch.load(connector_ckp_path, map_location='cpu')
+        model.connector.load_state_dict(connector_ckp)
+        
+        model.to(torch.float16)
+        print('Model loaded successfully!')
+        
+    elif model_name_or_path is not None and 'lora' not in model_name_or_path:
         
         # for qwen1.5 and qwen2.5
         model = LLaVAKD.from_pretrained(model_name_or_path, low_cpu_mem_usage=True, torch_dtype=torch.float16)

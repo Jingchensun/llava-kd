@@ -35,19 +35,28 @@ done
 
 cd $EVAL_DIR/mme
 
-python3.12 convert_answer_to_mme.py --experiment $MODEL_NAME
-
-cd eval_tool
+python3.12 convert_answer_to_mme.py --experiment answers/$MODEL_NAME/merge.jsonl --data_path images
 
 mkdir -p $OLDPWD/eval/results
 
-eval_output=$(python3.12 calculation.py --results_dir answers/$MODEL_NAME 2>&1)
-echo "$eval_output"
+eval_output=$(python3.12 calculation.py --results_dir answers/$MODEL_NAME/merge 2>&1)
 
 cd -
-# Extract and save result
-score_line=$(echo "$eval_output" | grep -E "MME metric:" | tail -1)
-if [ -n "$score_line" ]; then
-    echo "MME: $score_line" >> eval/results/${MODEL_NAME}_eval.txt
+
+# Extract total perception score
+perception_score=$(echo "$eval_output" | grep "total score:" | awk '{print $3}')
+
+echo ""
+echo "=========================================="
+echo "MME Evaluation Results:"
+echo "Perception Score: $perception_score"
+echo "=========================================="
+
+# Extract detailed scores
+echo "$eval_output" | grep -A 15 "Perception"
+
+# Save results
+if [ -n "$perception_score" ]; then
+    echo "MME: Perception: $perception_score" >> eval/results/${MODEL_NAME}_eval.txt
 fi
 

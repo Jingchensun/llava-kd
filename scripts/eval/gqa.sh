@@ -41,12 +41,12 @@ python3.12 scripts/convert_gqa_for_eval.py --src $output_file --dst $GQADIR/test
 mkdir -p eval/results
 
 cd $GQADIR
-eval_output=$(python3.12 eval/eval.py --tier testdev_balanced 2>&1)
-echo "$eval_output"
+eval_output=$(python3.12 eval.py --tier testdev_balanced --questions testdev_balanced_questions.json --predictions testdev_balanced_predictions.json 2>&1)
 
 cd -
 # Extract and save result
-accuracy_line=$(echo "$eval_output" | grep -i "accuracy\|score" | head -1)
+accuracy_line=$(echo "$eval_output" | grep "^Accuracy:" | head -1)
 if [ -n "$accuracy_line" ]; then
+    echo "GQA: $accuracy_line"
     echo "GQA: $accuracy_line" >> eval/results/${MODEL_NAME}_eval.txt
 fi
