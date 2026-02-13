@@ -9,29 +9,39 @@ MODEL_PATH=$1
 MODEL_NAME=$2
 EVAL_DIR="./eval_dataset" # If the evaluation fails, try changing the path to an absolute path
 
-for IDX in $(seq 0 $((CHUNKS-1))); do
-    CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python3.12 -m llavakd.eval.model_vqa_loader \
-        --model-path $MODEL_PATH \
-        --question-file $EVAL_DIR/mme/llava_mme.jsonl \
-        --image-folder $EVAL_DIR/mme/images \
-        --answers-file $EVAL_DIR/mme/answers/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl \
-        --num-chunks $CHUNKS \
-        --chunk-idx $IDX \
-        --temperature 0 \
-        --conv-mode phi &
-done
-
-wait
-
 output_file=$EVAL_DIR/mme/answers/$MODEL_NAME/merge.jsonl
 
-# Clear out the output file if it exists.
-> "$output_file"
+# Check if answer file already exists
+if [ -f "$output_file" ]; then
+    echo "MME answer file exists: $output_file"
+    echo "Skipping answer generation, proceeding to evaluation..."
+else
+    echo "MME answer file not found, generating answers..."
+    
+    for IDX in $(seq 0 $((CHUNKS-1))); do
+        CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python3.12 -m llavakd.eval.model_vqa_loader \
+            --model-path $MODEL_PATH \
+            --question-file $EVAL_DIR/mme/llava_mme.jsonl \
+            --image-folder $EVAL_DIR/mme/images \
+            --answers-file $EVAL_DIR/mme/answers/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl \
+            --num-chunks $CHUNKS \
+            --chunk-idx $IDX \
+            --temperature 0 \
+            --conv-mode phi &
+    done
 
-# Loop through the indices and concatenate each file.
-for IDX in $(seq 0 $((CHUNKS-1))); do
-    cat $EVAL_DIR/mme/answers/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl >> "$output_file"
-done
+    wait
+
+    # Clear out the output file if it exists.
+    > "$output_file"
+
+    # Loop through the indices and concatenate each file.
+    for IDX in $(seq 0 $((CHUNKS-1))); do
+        cat $EVAL_DIR/mme/answers/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl >> "$output_file"
+    done
+    
+    echo "MME answer generation completed"
+fi
 
 cd $EVAL_DIR/mme
 

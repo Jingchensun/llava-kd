@@ -7,37 +7,42 @@
 # MODEL_NAME="Qwen25_0.5B_Local"
 
 MODEL_PATH="Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP"
-MODEL_NAME="HF_TinyLLaVA_Qwen2_0.5B"
+MODEL_NAME="HF_TinyLLaVA_Qwen25_3B"
 
 
 cd /home/jsun/llava-kd
 
-echo "开始串行评估 - $(date)"
+# Initialize result file
+RESULT_FILE="eval/results/${MODEL_NAME}_eval.txt"
+mkdir -p eval/results
+> "$RESULT_FILE"
 
-# 串行执行每个评估任务，避免OOM
-# echo "=== 运行 GQA 评估 ==="
-# CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/gqa.sh "$MODEL_PATH" "$MODEL_NAME"
+echo "Starting serial evaluation - $(date)"
+echo "Results will be saved to: $RESULT_FILE"
 
-# echo "=== 运行 SQA 评估 ==="
-# CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/sqa.sh "$MODEL_PATH" "$MODEL_NAME"
+# Execute evaluation tasks serially to avoid OOM
+echo "=== Running GQA Evaluation ==="
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/gqa.sh "$MODEL_PATH" "$MODEL_NAME" || echo "GQA evaluation failed, continuing to next evaluation..."
 
-# echo "=== 运行 TextVQA 评估 ==="
-# CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/textvqa.sh "$MODEL_PATH" "$MODEL_NAME"
+echo "=== Running SQA Evaluation ==="
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/sqa.sh "$MODEL_PATH" "$MODEL_NAME" || echo "SQA evaluation failed, continuing to next evaluation..."
 
-# echo "=== 运行 POPE 评估 ==="
-# CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/pope.sh "$MODEL_PATH" "$MODEL_NAME"
+echo "=== Running TextVQA Evaluation ==="
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/textvqa.sh "$MODEL_PATH" "$MODEL_NAME" || echo "TextVQA evaluation failed, continuing to next evaluation..."
 
-# echo "=== 运行 MME 评估 ==="
-CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/mme.sh "$MODEL_PATH" "$MODEL_NAME"
+echo "=== Running POPE Evaluation ==="
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/pope.sh "$MODEL_PATH" "$MODEL_NAME" || echo "POPE evaluation failed, continuing to next evaluation..."
 
-# echo "=== 运行 MMBench 评估 ==="
-# CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/mmbench.sh "$MODEL_PATH" "$MODEL_NAME"
+echo "=== Running MME Evaluation ==="
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/mme.sh "$MODEL_PATH" "$MODEL_NAME" || echo "MME evaluation failed, continuing to next evaluation..."
+
+echo "=== Running MMBench Evaluation ==="
+CUDA_VISIBLE_DEVICES=0,1,2,3 bash scripts/eval/mmbench.sh "$MODEL_PATH" "$MODEL_NAME" || echo "MMBench evaluation failed, continuing to next evaluation..."
 
 echo "All evaluations completed - $(date)"
-
-# CUDA_VISIBLE_DEVICES=4 bash scripts/eval/mmmu.sh "$MODEL_PATH" "$MODEL_NAME" &
-# CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 bash scripts/eval/vqav2.sh "$MODEL_PATH" "$MODEL_NAME" &
-# CUDA_VISIBLE_DEVICES=6 bash scripts/eval/vizwiz.sh "$MODEL_PATH" "$MODEL_NAME" &
-# CUDA_VISIBLE_DEVICES=0 bash scripts/eval/mmbench_cn.sh "$MODEL_PATH" "$MODEL_NAME" &
-
-wait        
+echo ""
+echo "========== Evaluation Results Summary =========="
+cat "$RESULT_FILE"
+echo "================================================="
+echo "Results saved to: $RESULT_FILE"
+     
