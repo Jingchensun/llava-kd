@@ -65,9 +65,32 @@ if [ -f "$result_file" ]; then
     num_answers=$(python3.12 -c "import pandas as pd; df=pd.read_excel('$result_file'); print(len(df))")
     echo ""
     echo "=========================================="
-    echo "MMBench Evaluation Complete"
+    echo "MMBench Answer Generation Complete"
     echo "Total answers: $num_answers"
     echo "Results saved to: ${result_file}"
     echo "=========================================="
-    echo "MMBench: Total answers: $num_answers | Results: ${result_file}" >> eval/results/${MODEL_NAME}_eval.txt
+    
+    # Evaluate accuracy
+    echo ""
+    echo "Starting accuracy evaluation..."
+    python3.12 $EVAL_DIR/mmbench/eval.py \
+        --result "$result_file" \
+        --meta $EVAL_DIR/mmbench/$SPLIT.tsv \
+        --model $MODEL_NAME
+    
+    # Extract overall accuracy from the result
+    overall_csv="$EVAL_DIR/mmbench/answers_upload/$SPLIT/${MODEL_NAME}_overall.csv"
+    if [ -f "$overall_csv" ]; then
+        accuracy=$(python3.12 -c "import pandas as pd; df=pd.read_csv('$overall_csv'); print(f'{df.iloc[0][\"overall\"]*100:.2f}')")
+        echo ""
+        echo "=========================================="
+        echo "MMBench Evaluation Results"
+        echo "Overall Accuracy: ${accuracy}%"
+        echo "Detailed results saved to: $EVAL_DIR/mmbench/answers_upload/$SPLIT/${MODEL_NAME}_*"
+        echo "=========================================="
+        echo "MMBench: Accuracy: ${accuracy}% | Total answers: $num_answers | Results: ${result_file}" >> eval/results/${MODEL_NAME}_eval.txt
+    else
+        echo "Warning: Evaluation results not found. Check $EVAL_DIR/mmbench/answers_upload/$SPLIT/ for details."
+        echo "MMBench: Total answers: $num_answers | Results: ${result_file}" >> eval/results/${MODEL_NAME}_eval.txt
+    fi
 fi

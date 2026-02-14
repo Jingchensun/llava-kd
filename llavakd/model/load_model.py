@@ -41,12 +41,13 @@ def load_pretrained_model(model_name_or_path, load_type='hf', load_8bit=False, l
     else:
         kwargs['torch_dtype'] = torch.float16
     
-    # 检查是否为分散格式的模型（language_model/, connector/, vision_tower/ 子目录）
-    is_split_format = (
-        os.path.exists(os.path.join(model_name_or_path, 'language_model/pytorch_model.bin')) and
-        os.path.exists(os.path.join(model_name_or_path, 'connector/pytorch_model.bin')) and
-        os.path.exists(os.path.join(model_name_or_path, 'vision_tower/pytorch_model.bin'))
-    )
+    # 检查是否为分散格式的模型（language_model/, connector/ 子目录）
+    # vision_tower 可以不存在（中间checkpoint不保存vision_tower）
+    has_language_model = os.path.exists(os.path.join(model_name_or_path, 'language_model/pytorch_model.bin'))
+    has_connector = os.path.exists(os.path.join(model_name_or_path, 'connector/pytorch_model.bin'))
+    has_vision_tower = os.path.exists(os.path.join(model_name_or_path, 'vision_tower/pytorch_model.bin'))
+    
+    is_split_format = has_language_model and has_connector
     
     if model_name_or_path is not None and is_split_format:
         # 加载分散格式的模型（训练保存的格式）
@@ -64,10 +65,23 @@ def load_pretrained_model(model_name_or_path, load_type='hf', load_8bit=False, l
         model.language_model.tie_weights()
         
         # 加载 Vision Tower 权重
-        vision_tower_ckp_path = os.path.join(model_name_or_path, 'vision_tower/pytorch_model.bin')
-        print(f'Loading vision tower from {vision_tower_ckp_path}')
-        vision_tower_ckp = torch.load(vision_tower_ckp_path, map_location='cpu')
-        model.vision_tower._vision_tower.load_state_dict(vision_tower_ckp, strict=False)
+        if has_vision_tower:
+            # 从本地checkpoint加载
+            vision_tower_ckp_path = os.path.join(model_name_or_path, 'vision_tower/pytorch_model.bin')
+            print(f'Loading vision tower from {vision_tower_ckp_path}')
+            vision_tower_ckp = torch.load(vision_tower_ckp_path, map_location='cpu')
+            model.vision_tower._vision_tower.load_state_dict(vision_tower_ckp, strict=False)
+        else:
+            # 从HuggingFace加载（中间checkpoint不保存vision_tower）
+            print(f'Vision tower not found in checkpoint, loading from HuggingFace: {model_config.vision_model_name_or_path}')
+            pre_vision_tower = SiglipVisionModel.from_pretrained(
+                model_config.vision_model_name_or_path,
+                cache_dir=DEFAULT_CACHE_DIR
+            )
+            model.vision_tower._vision_tower.load_state_dict(pre_vision_tower.state_dict())
+            del pre_vision_tower
+            torch.cuda.empty_cache()
+            print('Vision tower loaded from HuggingFace successfully')
         
         # 加载 Connector 权重
         connector_ckp_path = os.path.join(model_name_or_path, 'connector/pytorch_model.bin')

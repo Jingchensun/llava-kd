@@ -3,11 +3,11 @@
 # export LD_LIBRARY_PATH=/usr/local/cuda-12.6/extras/CUPTI/lib64:$LD_LIBRARY_PATH
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.12/site-packages/nvidia/nccl/lib
 
-# MODEL_PATH="/home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft"
-# MODEL_NAME="Qwen25_0.5B_Local"
+MODEL_PATH="/home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft"
+MODEL_NAME="Qwen25_0.5B_Local-last"
 
-MODEL_PATH="Zhang199/TinyLLaVA-Qwen2.5-3B-SigLIP"
-MODEL_NAME="HF_TinyLLaVA_Qwen25_3B"
+# MODEL_PATH="Zhang199/TinyLLaVA-Qwen2-0.5B-SigLIP"
+# MODEL_NAME="HF_TinyLLaVA_Qwen25_0.5B"
 
 
 cd /home/jsun/llava-kd
