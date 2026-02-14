@@ -10,7 +10,7 @@
 #SBATCH --time=4-23:00:00                        # 运行时间（1小时）
 #SBATCH --partition=prod_long                       # 分区设置（prod 分区）
 #SBATCH --gres=shard:16 
-#SBATCH --constraint=GPUMODEL_H100-SXM5
+#SBATCH --constraint=GPUMODEL_H200-SXM5
 
 
 export WANDB_API_KEY="595cc8071abc681aa346ae6017f73fc16a9b2033"  # 替换为你的API Key
@@ -21,5 +21,6 @@ source /home/onsi/jsun/miniconda3/bin/activate llava-kd        # 激活 Conda �
 # bash 1_train_qwen2_distill.sh
 # bash 2_train_sft_student_only.sh
 # bash 3_train_qwen2_distill_after_sft.sh
+bash 3_train_qwen2_distill_after_sft.sh type3
 
 sleep infinity

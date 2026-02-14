@@ -1,1 +1,6 @@
 GQA: Accuracy: 60.30%
+SQA: Total: 4241, Correct: 2502, Accuracy: 59.00%, IMG-Accuracy: 59.00%
+TextVQA: Samples: 5000, Accuracy: 51.67%
+POPE: Accuracy: 0.8744, Precision: 0.9494470774091627, F1 score: 0.8691250903832248
+MME: Perception: 1290.937174869948
+MMBench: Accuracy: 60.48% | Total answers: 4329 | Results: ./eval_dataset/mmbench/answers_upload/mmbench_dev_en_20231003/Qwen25_0.5B_Local-last.xlsx

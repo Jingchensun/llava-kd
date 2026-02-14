@@ -8,8 +8,8 @@
 # - 最终保存: 保存完整模型
 # ============================================================
 
-if [ $# -ne 10 ]; then
-    echo "Usage: $0 <DATA_PATH> <IMAGE_PATH> <LLM_VERSION> <VT_VERSION> <VT_VERSION2> <CN_VERSION> <VERSION> <TRAIN_RECIPE> <MODEL_MAX_LENGTH> <SFT_CKPT_PATH>"
+if [ $# -lt 10 ]; then
+    echo "Usage: $0 <DATA_PATH> <IMAGE_PATH> <LLM_VERSION> <VT_VERSION> <VT_VERSION2> <CN_VERSION> <VERSION> <TRAIN_RECIPE> <MODEL_MAX_LENGTH> <SFT_CKPT_PATH> [DISTIL_RATIO_TYPE]"
     exit 1
 fi
 
@@ -24,6 +24,7 @@ VERSION="$7"
 TRAIN_RECIPE="$8"
 MODEL_MAX_LENGTH="$9"
 SFT_CKPT_PATH="${10}"
+DISTIL_RATIO_TYPE="${11:-type1}"  # 默认为 type1（等权重）
 
 VT_VARIANT="${VT_VERSION#*/}"
 LLM_VARIANT="${LLM_VERSION#*/}"
@@ -45,6 +46,7 @@ echo "=========================================="
 echo "SFT checkpoint: $SFT_CKPT_PATH"
 echo "Output directory: $OUTPUT_DIR"
 echo "Log file: $LOG_FILE"
+echo "Distil Ratio Type: $DISTIL_RATIO_TYPE"
 echo "=========================================="
 
 deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) llavakd/train/train_distill_after_qwen2_sft.py \
@@ -68,6 +70,7 @@ deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) ll
     --tune_type_connector full \
     --group_by_modality_length True \
     --pretrained_model_path $SFT_CKPT_PATH \
+    --distil_ratio_type $DISTIL_RATIO_TYPE \
     --output_dir $OUTPUT_DIR \
     --num_train_epochs 1 \
     --per_device_train_batch_size 1 \

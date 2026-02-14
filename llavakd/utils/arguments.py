@@ -83,3 +83,9 @@ class TrainingArguments(transformers.TrainingArguments):
     group_by_modality_length: bool = field(default=False)
     vision_tower_lr: Optional[float] = None
     pretrained_model_path: Optional[str] = field(default=None)
+    
+    # 损失加权策略参数
+    distil_ratio_type: str = field(
+        default="type1",
+        metadata={"help": "Loss weighting strategy: type1 (equal), type2 (heteroscedastic), type3 (instance-conditional)"}
+    )

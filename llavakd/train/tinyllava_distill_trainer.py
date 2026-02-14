@@ -141,10 +141,43 @@ class DistillLLaVATrainer(Trainer):
         # 缓存teacher设备，避免每次查找
         self.teacher_device = next(self.teacher_model.parameters()).device
         print(f"[Rank {self.args.local_rank}] Teacher模型位于: {self.teacher_device}")
+        
+        # 初始化损失加权策略
+        distil_ratio_type = getattr(self.args, 'distil_ratio_type', 'type1')
+        if distil_ratio_type in ['type2', 'type3']:
+            from ..model.weighting import create_weighting_strategy
+            
+            # 获取 teacher 模型的隐藏层维度（用于 type3）
+            teacher_hidden_size = getattr(self.teacher_model.config, 'hidden_size', 4096)
+            
+            # 计算任务数量：基础loss + forward_distillation + visual_distillation + visual_rela
+            num_tasks = 4
+            
+            self.weighting_strategy = create_weighting_strategy(
+                distil_ratio_type,
+                feature_dim=teacher_hidden_size,
+                num_tasks=num_tasks,
+                hidden_dim=128
+            ).to(device=self.teacher_device)
+            
+            # 注册为模型子模块以支持DeepSpeed
+            setattr(self.model, 'distill_weighting_strategy', self.weighting_strategy)
+            
+            print(f"\n{'='*60}")
+            print(f"🔧 Distillation Weighting Strategy: {distil_ratio_type}")
+            print(f"  Feature dim: {teacher_hidden_size}")
+            print(f"  Num tasks: {num_tasks}")
+            print(f"  Hidden dim: 128")
+            print(f"{'='*60}\n")
+        else:
+            self.weighting_strategy = None
+            print(f"[Rank {self.args.local_rank}] Using type1 (equal) weighting")
+        
+        self._log_weights = {}
 
     def _save_checkpoint(self, model, trial, metrics=None):
         """
-        中间 checkpoint 保存 LLM + Connector 权重。
+        中间 checkpoint 保存 LLM + Connector 权重 + Weighting Strategy 权重。
         最终完整模型由 training_recipe.save() 保存。
         """
         from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
@@ -183,7 +216,21 @@ class DistillLLaVATrainer(Trainer):
             llm_size_mb = os.path.getsize(llm_path) / 1024 / 1024
             
             total_size_mb = connector_size_mb + llm_size_mb
-            logger.info(f"✓ Checkpoint saved: connector ({connector_size_mb:.2f} MB) + LLM ({llm_size_mb:.2f} MB) = {total_size_mb:.2f} MB -> {output_dir}")
+            
+            # 保存 Weighting Strategy 权重（如果存在）
+            if self.weighting_strategy is not None:
+                try:
+                    weighting_state_dict = self.weighting_strategy.state_dict()
+                    weighting_path = os.path.join(output_dir, 'weighting_strategy.bin')
+                    torch.save(weighting_state_dict, weighting_path)
+                    weighting_size_mb = os.path.getsize(weighting_path) / 1024 / 1024
+                    total_size_mb += weighting_size_mb
+                    logger.info(f"✓ Checkpoint saved: connector ({connector_size_mb:.2f} MB) + LLM ({llm_size_mb:.2f} MB) + weighting ({weighting_size_mb:.2f} MB) = {total_size_mb:.2f} MB -> {output_dir}")
+                except Exception as e:
+                    logger.warning(f"Failed to save weighting strategy: {e}")
+                    logger.info(f"✓ Checkpoint saved: connector ({connector_size_mb:.2f} MB) + LLM ({llm_size_mb:.2f} MB) = {total_size_mb:.2f} MB -> {output_dir}")
+            else:
+                logger.info(f"✓ Checkpoint saved: connector ({connector_size_mb:.2f} MB) + LLM ({llm_size_mb:.2f} MB) = {total_size_mb:.2f} MB -> {output_dir}")
             
             # 管理 checkpoint 数量
             self._rotate_checkpoints(use_mtime=False, output_dir=self.args.output_dir)
@@ -235,19 +282,39 @@ class DistillLLaVATrainer(Trainer):
         if self.optimizer is None:
             decay_parameters = get_parameter_names(opt_model, ALL_LAYERNORM_LAYERS)
             decay_parameters = [name for name in decay_parameters if "bias" not in name]
+            
+            # 蒸馏权重策略参数
+            distill_weighting_parameters = [
+                name for name, _ in opt_model.named_parameters() 
+                if "distill_weighting_strategy" in name
+            ]
+            
+            # 根据 distil_ratio_type 设置不同的学习率倍数
+            ratio_strategy = getattr(self.args, 'distil_ratio_type', 'type1')
+            if ratio_strategy == 'type2':
+                distill_weighting_lr = self.args.learning_rate * 1000.0
+            elif ratio_strategy == 'type3':
+                distill_weighting_lr = self.args.learning_rate * 10.0
+            else:
+                distill_weighting_lr = self.args.learning_rate
+            
             if self.args.mm_projector_lr is not None:
                 connector_parameters = [name for name, _ in opt_model.named_parameters() if "connector" in name]
                 optimizer_grouped_parameters = [
                     {
                         "params": [
-                            p for n, p in opt_model.named_parameters() if (n in decay_parameters and n not in connector_parameters and p.requires_grad)
+                            p for n, p in opt_model.named_parameters() 
+                            if (n in decay_parameters and n not in connector_parameters 
+                                and n not in distill_weighting_parameters and p.requires_grad)
                         ],
                         "weight_decay": self.args.weight_decay,
                         "name": "decay_no_connector_parameters"
                     },
                     {
                         "params": [
-                            p for n, p in opt_model.named_parameters() if (n not in decay_parameters and n not in connector_parameters and p.requires_grad)
+                            p for n, p in opt_model.named_parameters() 
+                            if (n not in decay_parameters and n not in connector_parameters 
+                                and n not in distill_weighting_parameters and p.requires_grad)
                         ],
                         "weight_decay": 0.0,
                         "name": "no_decay_no_connector_parameters"
@@ -255,7 +322,8 @@ class DistillLLaVATrainer(Trainer):
 
                     {
                         "params": [
-                            p for n, p in opt_model.named_parameters() if (n in decay_parameters and n in connector_parameters and p.requires_grad)
+                            p for n, p in opt_model.named_parameters() 
+                            if (n in decay_parameters and n in connector_parameters and p.requires_grad)
                         ],
                         "weight_decay": self.args.weight_decay,
                         "lr": self.args.mm_projector_lr,
@@ -263,30 +331,74 @@ class DistillLLaVATrainer(Trainer):
                     },
                     {
                         "params": [
-                            p for n, p in opt_model.named_parameters() if (n not in decay_parameters and n in connector_parameters and p.requires_grad)
+                            p for n, p in opt_model.named_parameters() 
+                            if (n not in decay_parameters and n in connector_parameters and p.requires_grad)
                         ],
                         "weight_decay": 0.0,
                         "lr": self.args.mm_projector_lr,
                         "name": "no_decay_proj_parameters"
                     },
                 ]
+                
+                # 添加蒸馏权重策略参数组
+                if distill_weighting_parameters:
+                    optimizer_grouped_parameters.append({
+                        "params": [
+                            p for n, p in opt_model.named_parameters() 
+                            if (n in distill_weighting_parameters and p.requires_grad)
+                        ],
+                        "weight_decay": 0.0,
+                        "lr": distill_weighting_lr,
+                        "name": "distill_weighting_parameters"
+                    })
             else:
                 optimizer_grouped_parameters = [
                     {
                         "params": [
-                            p for n, p in opt_model.named_parameters() if (n in decay_parameters and p.requires_grad)
+                            p for n, p in opt_model.named_parameters() 
+                            if (n in decay_parameters and n not in distill_weighting_parameters and p.requires_grad)
                         ],
                         "weight_decay": self.args.weight_decay,
                         "name": "decay_parameters"
                     },
                     {
                         "params": [
-                            p for n, p in opt_model.named_parameters() if (n not in decay_parameters and p.requires_grad)
+                            p for n, p in opt_model.named_parameters() 
+                            if (n not in decay_parameters and n not in distill_weighting_parameters and p.requires_grad)
                         ],
                         "weight_decay": 0.0,
                         "name": "no_decay_parameters"
                     }
                 ]
+                
+                # 添加蒸馏权重策略参数组
+                if distill_weighting_parameters:
+                    optimizer_grouped_parameters.append({
+                        "params": [
+                            p for n, p in opt_model.named_parameters() 
+                            if (n in distill_weighting_parameters and p.requires_grad)
+                        ],
+                        "weight_decay": 0.0,
+                        "lr": distill_weighting_lr,
+                        "name": "distill_weighting_parameters"
+                    })
+            
+            # 打印蒸馏权重参数信息
+            if distill_weighting_parameters:
+                print(f"\n{'='*60}")
+                print(f"🔧 Distillation Weighting Parameters:")
+                for name in distill_weighting_parameters:
+                    param = dict(opt_model.named_parameters())[name]
+                    print(f"  - {name}: shape={param.shape}, dtype={param.dtype}, requires_grad={param.requires_grad}")
+                
+                if ratio_strategy == 'type2':
+                    lr_multiplier = 1000.0
+                elif ratio_strategy == 'type3':
+                    lr_multiplier = 10.0
+                else:
+                    lr_multiplier = 1.0
+                print(f"  Learning Rate: {distill_weighting_lr:.2e} ({lr_multiplier:.0f}x base LR for {ratio_strategy})")
+                print(f"{'='*60}\n")
 
             if getattr(self.args, "moe_enable", False):
                 from deepspeed.moe.utils import split_params_into_different_moe_groups_for_optimizer
@@ -360,7 +472,7 @@ class DistillLLaVATrainer(Trainer):
                     f"{','.join(outputs.keys())}. For reference, the inputs it received are {','.join(inputs.keys())}."
                 )
 
-        loss = outputs['loss']
+        base_loss = outputs['loss']
 
         _, _, voc_size = outputs['logits'].shape
         
@@ -378,6 +490,7 @@ class DistillLLaVATrainer(Trainer):
         masked_student_logits = shift_student_logits.view(-1, voc_size)[mask]       
         masked_teacher_logits = shift_teacher_logits.view(-1, voc_size)[teacher_mask]   
 
+        forward_distillation_loss = torch.tensor(0.0, device=student_device, dtype=base_loss.dtype)
         if masked_teacher_logits.shape != masked_student_logits.shape:
             if self.niter % 100 == 0:  # 减少warning输出频率
                 print(f"[Warning] Shape mismatch: teacher={masked_teacher_logits.shape}, student={masked_student_logits.shape}")
@@ -387,8 +500,10 @@ class DistillLLaVATrainer(Trainer):
                 F.log_softmax(masked_student_logits, dim=-1),
                 F.softmax(masked_teacher_logits, dim=-1)
             )
-            loss = loss + forward_distillation_loss
 
+        forward_visual_distillation = torch.tensor(0.0, device=student_device, dtype=base_loss.dtype)
+        llm_visual_rela_distill_loss = torch.tensor(0.0, device=student_device, dtype=base_loss.dtype)
+        
         if num_images == 1:
             img_start = spilt_sizes[0][0]
             img_end = img_start + 728
@@ -409,13 +524,91 @@ class DistillLLaVATrainer(Trainer):
                 student_img_rela.flatten(), teacher_img_rela.flatten(), dim=0
             )
 
-            loss = loss + forward_visual_distillation + llm_visual_rela_distill_loss
-
+        # 使用加权策略
+        if self.weighting_strategy is not None:
+            try:
+                # 获取 teacher 的隐藏状态作为特征（用于 type3）
+                teacher_features = None
+                if teacher_rela is not None:
+                    # 优先使用 teacher_rela
+                    teacher_rela_device = teacher_rela.to(student_device, non_blocking=True)
+                    if teacher_rela_device.dim() == 3:
+                        # (batch, seq_len, hidden_dim) -> (batch, hidden_dim)
+                        teacher_features = teacher_rela_device.mean(dim=1)
+                    elif teacher_rela_device.dim() == 2:
+                        teacher_features = teacher_rela_device
+                elif num_images == 1 and teacher_image_rela is not None:
+                    # 备选方案：使用 teacher_image_rela
+                    teacher_img_rela_device = teacher_image_rela.to(student_device, non_blocking=True)
+                    if teacher_img_rela_device.dim() == 3:
+                        teacher_features = teacher_img_rela_device.mean(dim=1)
+                    elif teacher_img_rela_device.dim() == 2:
+                        teacher_features = teacher_img_rela_device
+                
+                # 准备损失列表
+                losses = [base_loss, forward_distillation_loss, forward_visual_distillation, llm_visual_rela_distill_loss]
+                
+                # 调用加权策略
+                weighted_loss, loss_weights = self.weighting_strategy(
+                    *losses,
+                    teacher_features=teacher_features
+                )
+                loss = weighted_loss
+                
+                # 记录权重信息
+                self._log_weights = loss_weights
+                
+                # 定期打印和记录到 wandb
+                if self.niter % 100 == 0 and self.args.local_rank == 0:
+                    weight_info = []
+                    loss_info = []
+                    wandb_log_dict = {
+                        "train/llm_loss": base_loss.item(),
+                        "train/total_loss": weighted_loss.item(),
+                        "train/forward_distillation_loss": forward_distillation_loss.item(),
+                        "train/forward_visual_distillation": forward_visual_distillation.item(),
+                        "train/llm_visual_rela_distill_loss": llm_visual_rela_distill_loss.item(),
+                    }
+                    
+                    for key, value in loss_weights.items():
+                        if key.endswith('_weight') and not key.endswith('_weighted'):
+                            task_name = key.replace('_weight', '').replace('_', ' ').title()
+                            weight_info.append(f"{task_name}: {value:.4f}")
+                            wandb_log_dict[f"weights/{key}"] = value
+                        elif key.endswith('_weighted'):
+                            task_name = key.replace('_weighted', '').replace('_', ' ').title()
+                            loss_info.append(f"{task_name}: {value:.4f}")
+                            wandb_log_dict[f"weighted_losses/{key}"] = value
+                    
+                    if weight_info:
+                        print(f"[Step {self.niter}] Weights - " + ", ".join(weight_info))
+                    if loss_info:
+                        print(f"[Step {self.niter}] Weighted - " + ", ".join(loss_info))
+                    
+                    # 打印 log_vars（仅对 type2 策略）
+                    if hasattr(self.weighting_strategy, 'log_vars'):
+                        log_vars_str = ", ".join([f"{v:.4f}" for v in self.weighting_strategy.log_vars.detach().cpu().tolist()])
+                        print(f"[Step {self.niter}] Log_vars - [{log_vars_str}]")
+                        for i, log_var in enumerate(self.weighting_strategy.log_vars.detach().cpu().tolist()):
+                            wandb_log_dict[f"log_vars/task_{i}"] = log_var
+                    
+                    wandb.log(wandb_log_dict, step=self.niter)
+                    
+            except Exception as e:
+                print(f"[Warning] Weighting strategy failed, using simple sum: {e}")
+                loss = base_loss + forward_distillation_loss + forward_visual_distillation + llm_visual_rela_distill_loss
+        else:
+            # Type1: 简单相加
+            loss = base_loss + forward_distillation_loss + forward_visual_distillation + llm_visual_rela_distill_loss
             
-        if self.niter % 100 == 0 and self.args.local_rank==0:
-            wandb.log({
-                "train/llm_loss": outputs['loss'],
-            }, step=self.niter)
+            if self.niter % 100 == 0 and self.args.local_rank == 0:
+                wandb.log({
+                    "train/llm_loss": base_loss.item(),
+                    "train/total_loss": loss.item(),
+                    "train/forward_distillation_loss": forward_distillation_loss.item(),
+                    "train/forward_visual_distillation": forward_visual_distillation.item(),
+                    "train/llm_visual_rela_distill_loss": llm_visual_rela_distill_loss.item(),
+                }, step=self.niter)
 
         return (loss, outputs) if return_outputs else loss
     
