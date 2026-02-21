@@ -23,8 +23,11 @@
 # ============================================================
 
 # ============== 数据路径配置 ==============
-DATA_PATH=/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json     # finetune annotation file
-IMAGE_PATH=/home/jsun/llava-kd/dataset/finetune_data              # finetune image dir
+# DATA_PATH=/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json     # finetune annotation file
+# IMAGE_PATH=/home/jsun/llava-kd/dataset/finetune_data              # finetune image dir
+
+DATA_PATH=/home/jsun/llava-kd/dataset/finetune_data/filtered_scienceqa_images-6k.json
+IMAGE_PATH=/home/jsun/llava-kd/dataset/finetune_data
 
 # ============== 模型配置 ==============
 # 注意: Teacher 模型在 train_distill_after_qwen2_sft.py 中配置

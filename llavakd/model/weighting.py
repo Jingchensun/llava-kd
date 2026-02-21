@@ -37,8 +37,8 @@ class EqualWeighting(nn.Module):
         """
         total_loss = sum(losses)
         
-        # 构建权重字典
-        task_names = ['main_loss', 'logits_distill_loss', 'v_loss', 'attn_loss']
+        # 构建权重字典（名称与 trainer 中变量名一致）
+        task_names = ['base_loss', 'forward_distillation_loss', 'forward_visual_distillation', 'llm_visual_rela_distill_loss']
         weights = {}
         for i, loss in enumerate(losses):
             name = task_names[i] if i < len(task_names) else f'task_{i}'
@@ -93,8 +93,8 @@ class HeteroscedasticUncertainty(nn.Module):
             # 转回原来的 dtype
             total_loss += weighted.to(loss.dtype) if loss.dtype == torch.float16 else weighted
         
-        # 构建权重字典
-        task_names = ['main_loss', 'logits_distill_loss', 'v_loss', 'attn_loss']
+        # 构建权重字典（名称与 trainer 中变量名一致）
+        task_names = ['base_loss', 'forward_distillation_loss', 'forward_visual_distillation', 'llm_visual_rela_distill_loss']
         weights = {}
         for i, loss in enumerate(losses):
             name = task_names[i] if i < len(task_names) else f'task_{i}'
@@ -160,8 +160,8 @@ class InstanceConditionalWeighting(nn.Module):
         weighted_losses = precision * losses_tensor + log_vars
         total_loss = torch.mean(torch.sum(weighted_losses, dim=1))
         
-        # 构建权重字典
-        task_names = ['main_loss', 'logits_distill_loss', 'v_loss', 'attn_loss']
+        # 构建权重字典（名称与 trainer 中变量名一致）
+        task_names = ['base_loss', 'forward_distillation_loss', 'forward_visual_distillation', 'llm_visual_rela_distill_loss']
         weights = {}
         individual_weights = torch.mean(precision, dim=0)
         individual_weighted_losses = torch.mean(weighted_losses, dim=0)
@@ -238,8 +238,8 @@ class TrueInstanceWiseUncertainty(nn.Module):
         weighted_losses = precision * losses_tensor + log_vars
         total_loss = torch.mean(torch.sum(weighted_losses, dim=1))
         
-        # 构建权重字典
-        task_names = ['main_loss', 'logits_distill_loss', 'v_loss', 'attn_loss']
+        # 构建权重字典（名称与 trainer 中变量名一致）
+        task_names = ['base_loss', 'forward_distillation_loss', 'forward_visual_distillation', 'llm_visual_rela_distill_loss']
         weights = {}
         individual_weights = torch.mean(precision, dim=0)
         individual_weighted_losses = torch.mean(weighted_losses, dim=0)
