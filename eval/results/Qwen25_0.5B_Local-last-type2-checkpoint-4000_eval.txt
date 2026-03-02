@@ -1,0 +1,4 @@
+GQA: Accuracy: 58.90%
+SQA: Total: 4241, Correct: 2512, Accuracy: 59.23%, IMG-Accuracy: 59.64%
+TextVQA: Samples: 5000, Accuracy: 48.80%
+POPE: Accuracy: 0.8735, Precision: 0.933282208588957, F1 score: 0.8680456490727532

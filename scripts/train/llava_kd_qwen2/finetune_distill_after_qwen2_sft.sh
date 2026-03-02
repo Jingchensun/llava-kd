@@ -25,6 +25,7 @@ TRAIN_RECIPE="$8"
 MODEL_MAX_LENGTH="$9"
 SFT_CKPT_PATH="${10}"
 DISTIL_RATIO_TYPE="${11:-type1}"  # 默认为 type1（等权重）
+LEARNING_RATE="${12:-2e-5}"  # 学习率，默认 2e-5
 
 VT_VARIANT="${VT_VERSION#*/}"
 LLM_VARIANT="${LLM_VERSION#*/}"
@@ -47,6 +48,7 @@ echo "SFT checkpoint: $SFT_CKPT_PATH"
 echo "Output directory: $OUTPUT_DIR"
 echo "Log file: $LOG_FILE"
 echo "Distil Ratio Type: $DISTIL_RATIO_TYPE"
+echo "Learning Rate: $LEARNING_RATE"
 echo "=========================================="
 
 deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) llavakd/train/train_distill_after_qwen2_sft.py \
@@ -80,7 +82,7 @@ deepspeed --include localhost:0,1,2,3 --master_port $((29500 + RANDOM % 500)) ll
     --save_strategy "steps" \
     --save_steps 2000 \
     --save_total_limit 6 \
-    --learning_rate 2e-5 \
+    --learning_rate $LEARNING_RATE \
     --weight_decay 0. \
     --warmup_ratio 0.03 \
     --lr_scheduler_type "cosine" \

@@ -1,1 +1,0 @@
-SQA: Total: 4241, Correct: 1654, Accuracy: 39.00%, IMG-Accuracy: 51.76%

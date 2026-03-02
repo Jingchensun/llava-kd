@@ -99,17 +99,22 @@ def _load_connector_settings(model_arguments):
     return connector_args
 
 
-def wandb_log(model_arguments):
+def wandb_log(model_arguments, training_arguments):
     wandb_dir = "./wandb/"
     os.makedirs(wandb_dir, exist_ok=True)
 
+    run_name = getattr(training_arguments, 'run_name', None) or \
+               f"distill-after-sft-{model_arguments.model_name_or_path.split('/')[-1]}"
+
     config = {
         "model_name": f"{model_arguments.model_name_or_path.split('/')[-1]}-{model_arguments.vision_tower.split('/')[-1]}",
-        'total_epochs': 1,
+        'total_epochs': training_arguments.num_train_epochs,
+        'learning_rate': training_arguments.learning_rate,
+        'distil_ratio_type': getattr(model_arguments, 'distil_ratio_type', 'unknown'),
     }
     if int(os.getenv('LOCAL_RANK', '0')) == 0:
         wandb.init(project='DistillTinyLLaVA',
-                   name=f"distill-after-sft-{model_arguments.model_name_or_path.split('/')[-1]}",
+                   name=run_name,
                    config=config,
                    dir=wandb_dir)
 
@@ -132,7 +137,7 @@ def train():
     model_arguments, data_arguments, training_arguments = parser.parse_args_into_dataclasses()
     
     logger_setting(getattr(training_arguments, 'output_dir', None))
-    wandb_log(model_arguments)
+    wandb_log(model_arguments, training_arguments)
     
     # ============== 2. 加载 Teacher 模型 (从 HuggingFace) ==============
     teacher_model = load_teacher_model(local_rank)

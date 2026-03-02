@@ -23,11 +23,11 @@
 # ============================================================
 
 # ============== 数据路径配置 ==============
-# DATA_PATH=/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json     # finetune annotation file
-# IMAGE_PATH=/home/jsun/llava-kd/dataset/finetune_data              # finetune image dir
+DATA_PATH=/home/jsun/llava-kd/dataset/llava_v1_5_mix665k.json     # finetune annotation file
+IMAGE_PATH=/home/jsun/llava-kd/dataset/finetune_data              # finetune image dir
 
-DATA_PATH=/home/jsun/llava-kd/dataset/finetune_data/filtered_scienceqa_images-6k.json
-IMAGE_PATH=/home/jsun/llava-kd/dataset/finetune_data
+# DATA_PATH=/home/jsun/llava-kd/dataset/finetune_data/filtered_scienceqa_images-6k.json
+# IMAGE_PATH=/home/jsun/llava-kd/dataset/finetune_data
 
 # ============== 模型配置 ==============
 # 注意: Teacher 模型在 train_distill_after_qwen2_sft.py 中配置
@@ -46,12 +46,20 @@ MODEL_MAX_LENGTH=2048                           # max sequence length
 # 可选值: type1 (等权重), type2 (异方差不确定性), type3 (实例条件权重)
 DISTIL_RATIO_TYPE=${1:-type1}  # 从命令行参数读取，默认 type1
 
+# ============== 学习率配置 ==============
+LEARNING_RATE=${2:-2e-5}  # 从命令行参数读取，默认 2e-5
+LR_SUFFIX=${3:-""}  # 学习率后缀，用于区分不同实验
+
 # ============== SFT Checkpoint 路径 ==============
 # 指定 SFT 阶段保存的 checkpoint 路径，用于加载 LLM + Connector 权重
 SFT_CKPT_PATH=./checkpoints/qwen25-0_5b-sft
 
-# ============== 实验名称（包含weighting类型）==============
-VERSION=qwen25-0_5b-distill-after-sft-${DISTIL_RATIO_TYPE}
+# ============== 实验名称（包含weighting类型和学习率后缀）==============
+if [ -n "$LR_SUFFIX" ]; then
+    VERSION=qwen25-0_5b-distill-after-sft-${DISTIL_RATIO_TYPE}-${LR_SUFFIX}
+else
+    VERSION=qwen25-0_5b-distill-after-sft-${DISTIL_RATIO_TYPE}
+fi
 
 # ============== 开始训练 ==============
 echo "=========================================="
@@ -61,9 +69,10 @@ echo "Data path: $DATA_PATH"
 echo "Image path: $IMAGE_PATH"
 echo "SFT checkpoint: $SFT_CKPT_PATH"
 echo "Weighting strategy: $DISTIL_RATIO_TYPE"
+echo "Learning rate: $LEARNING_RATE"
 echo "Output: ./checkpoints/${VERSION}"
 echo "=========================================="
 
 bash finetune_distill_after_qwen2_sft.sh \
     "$DATA_PATH" "$IMAGE_PATH" "$LLM_VERSION" "$VT_VERSION" "$VT_VERSION2" \
-    "$CN_VERSION" "$VERSION" "$TRAIN_RECIPE" "$MODEL_MAX_LENGTH" "$SFT_CKPT_PATH" "$DISTIL_RATIO_TYPE"
+    "$CN_VERSION" "$VERSION" "$TRAIN_RECIPE" "$MODEL_MAX_LENGTH" "$SFT_CKPT_PATH" "$DISTIL_RATIO_TYPE" "$LEARNING_RATE"

@@ -21,6 +21,7 @@ source /home/onsi/jsun/miniconda3/bin/activate llava-kd        # 激活 Conda �
 # bash 1_train_qwen2_distill.sh
 # bash 2_train_sft_student_only.sh
 # bash 3_train_qwen2_distill_after_sft.sh
-bash 3_train_qwen2_distill_after_sft.sh type3
+# bash 3_train_qwen2_distill_after_sft.sh type3
+bash type2-lr-sweep.sh
 
-sleep infinity
+# sleep infinity

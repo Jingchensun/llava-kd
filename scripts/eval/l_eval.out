@@ -1,0 +1,283 @@
+开始串行评估 - Mon Mar  2 16:30:41 EST 2026
+=== 运行 GQA 评估 ===
+GQA answer file not found, generating answers...
+[2026-03-02 16:30:46,648] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:30:46,648] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:30:46,648] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:30:46,680] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+GQA answer generation completed
+/home/jsun/llava-kd
+GQA: Accuracy: 58.90%
+=== 运行 SQA 评估 ===
+[2026-03-02 16:35:21,432] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:35:21,432] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:35:21,432] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:35:21,481] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+SQA answer generation completed
+Total: 4241, Correct: 2512, Accuracy: 59.23%, IMG-Accuracy: 59.64%
+=== 运行 TextVQA 评估 ===
+TextVQA answer file not found, generating answers...
+[2026-03-02 16:38:03,303] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:38:03,387] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:38:03,387] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:38:03,543] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+TextVQA answer generation completed
+merge
+  0%|          | 0/5000 [00:00<?, ?it/s]  7%|▋         | 346/5000 [00:00<00:01, 3452.17it/s] 14%|█▍        | 692/5000 [00:00<00:01, 3446.73it/s] 21%|██        | 1037/5000 [00:00<00:01, 3430.16it/s] 28%|██▊       | 1386/5000 [00:00<00:01, 3450.92it/s] 35%|███▍      | 1732/5000 [00:00<00:00, 3442.53it/s] 42%|████▏     | 2077/5000 [00:00<00:00, 3436.32it/s] 48%|████▊     | 2421/5000 [00:00<00:00, 3437.18it/s] 55%|█████▌    | 2767/5000 [00:00<00:00, 3442.83it/s] 62%|██████▏   | 3112/5000 [00:00<00:00, 3436.63it/s] 69%|██████▉   | 3456/5000 [00:01<00:00, 3434.96it/s] 76%|███████▌  | 3802/5000 [00:01<00:00, 3440.16it/s] 83%|████████▎ | 4147/5000 [00:01<00:00, 3434.74it/s] 90%|████████▉ | 4492/5000 [00:01<00:00, 3439.18it/s] 97%|█████████▋| 4837/5000 [00:01<00:00, 3439.24it/s]100%|██████████| 5000/5000 [00:01<00:00, 3438.49it/s]
+Samples: 5000
+Accuracy: 48.80%
+=== 运行 POPE 评估 ===
+POPE answer file not found, generating answers...
+[2026-03-02 16:41:28,469] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:41:28,469] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:41:28,469] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:41:28,470] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+Warning: The default cache directory for DeepSpeed Triton autotune, /home/jsun/.triton/autotune, appears to be on an NFS system. While this is generally acceptable, if you experience slowdowns or hanging when DeepSpeed exits, it is recommended to set the TRITON_CACHE_DIR environment variable to a non-NFS path.
+[93m [WARNING] [0m async_io requires the dev libaio .so object and headers but these were not found.
+[93m [WARNING] [0m async_io: please install the libaio-dev package with apt
+[93m [WARNING] [0m If libaio is already installed (perhaps from source), try setting the CFLAGS and LDFLAGS environment variables to where it can be found.
+[93m [WARNING] [0m Please specify the CUTLASS repo directory as environment variable $CUTLASS_PATH
+[93m [WARNING] [0m sparse_attn requires a torch version >= 1.5 and < 2.0 but detected 2.6
+[93m [WARNING] [0m using untested triton version (3.2.0), only 1.0.0 is known to be compatible
+Loading split-format model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000
+Loading language model from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/language_model/pytorch_model.bin
+Loading vision tower from HuggingFace: google/siglip-so400m-patch14-384
+Vision tower loaded from HuggingFace successfully
+Loading connector from /home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type2/checkpoint-4000/connector/pytorch_model.bin
+Model loaded successfully!
+POPE answer generation completed
+Category: random, # samples: 2910
+TP	FP	TN	FN	
+1217	32	1378	283
+Accuracy: 0.8917525773195877
+Precision: 0.9743795036028823
+Recall: 0.8113333333333334
+F1 score: 0.8854128774099672
+Yes ratio: 0.4292096219931271
+0.885, 0.892, 0.974, 0.811, 0.429
+====================================
+Category: adversarial, # samples: 3000
+TP	FP	TN	FN	
+1217	161	1339	283
+Accuracy: 0.852
+Precision: 0.8831640058055152
+Recall: 0.8113333333333334
+F1 score: 0.8457261987491314
+Yes ratio: 0.4593333333333333
+0.846, 0.852, 0.883, 0.811, 0.459
+====================================
+Category: popular, # samples: 3000
+TP	FP	TN	FN	
+1217	87	1413	283
+Accuracy: 0.8766666666666667
+Precision: 0.933282208588957
+Recall: 0.8113333333333334
+F1 score: 0.8680456490727532
+Yes ratio: 0.43466666666666665
+0.868, 0.877, 0.933, 0.811, 0.435
+====================================
+
+========================================
+POPE Average Accuracy: 0.8735
+========================================
+=== 运行 MME 评估 ===
+MME answer file not found, generating answers...
+[2026-03-02 16:44:59,349] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:44:59,349] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:44:59,349] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2026-03-02 16:44:59,349] [INFO] [real_accelerator.py:203:get_accelerator] Setting ds_accelerator to cuda (auto detect)

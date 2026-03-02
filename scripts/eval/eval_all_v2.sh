@@ -6,8 +6,8 @@
 # Ctrl+C 时杀死整个进程组（包括所有子进程）
 trap 'echo "Interrupted!"; kill -- -$$ 2>/dev/null; exit 130' INT TERM
 
-MODEL_PATH="/home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type3"
-MODEL_NAME="Qwen25_0.5B_Local-last-type3"
+MODEL_PATH="${1:-/home/jsun/llava-kd/checkpoints/qwen25-0_5b-distill-after-sft-type3}"
+MODEL_NAME="${2:-Qwen25_0.5B_Local-last-type3}"
 
 # MODEL_PATH="Zhang199/TinyLLaVA-Qwen2-0.5B-SigLIP"
 # MODEL_NAME="HF_TinyLLaVA_Qwen25_0.5B"

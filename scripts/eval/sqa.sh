@@ -11,38 +11,30 @@ EVAL_DIR="./eval_dataset"
 
 output_file=$EVAL_DIR/sqa/answers/$MODEL_NAME/merge.jsonl
 
-# Check if answer file already exists
-if [ -f "$output_file" ]; then
-    echo "SQA answer file exists: $output_file"
-    echo "Skipping answer generation, proceeding to evaluation..."
-else
-    echo "SQA answer file not found, generating answers..."
-    
-    for IDX in $(seq 0 $((CHUNKS-1))); do
-        CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python3.12 -m llavakd.eval.model_vqa_science \
-            --model-path $MODEL_PATH \
-            --question-file $EVAL_DIR/sqa/llava_test_CQM-A.json \
-            --image-folder $EVAL_DIR/sqa/images/test \
-            --answers-file $EVAL_DIR/sqa/answers/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl \
-            --num-chunks $CHUNKS \
-            --chunk-idx $IDX \
-            --single-pred-prompt \
-            --temperature 0 \
-            --conv-mode phi &
-    done
+mkdir -p $EVAL_DIR/sqa/answers/$MODEL_NAME
 
-    wait
+for IDX in $(seq 0 $((CHUNKS-1))); do
+    CUDA_VISIBLE_DEVICES=${GPULIST[$IDX]} python3.12 -m llavakd.eval.model_vqa_science \
+        --model-path $MODEL_PATH \
+        --question-file $EVAL_DIR/sqa/llava_test_CQM-A.json \
+        --image-folder $EVAL_DIR/sqa/images/test \
+        --answers-file $EVAL_DIR/sqa/answers/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl \
+        --num-chunks $CHUNKS \
+        --chunk-idx $IDX \
+        --single-pred-prompt \
+        --temperature 0 \
+        --conv-mode phi &
+done
 
-    # Clear out the output file if it exists.
-    > "$output_file"
+wait
 
-    # Loop through the indices and concatenate each file.
-    for IDX in $(seq 0 $((CHUNKS-1))); do
-        cat $EVAL_DIR/sqa/answers/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl >> "$output_file"
-    done
-    
-    echo "SQA answer generation completed"
-fi
+> "$output_file"
+
+for IDX in $(seq 0 $((CHUNKS-1))); do
+    cat $EVAL_DIR/sqa/answers/$MODEL_NAME/${CHUNKS}_${IDX}.jsonl >> "$output_file"
+done
+
+echo "SQA answer generation completed"
 
 mkdir -p eval/results
 
